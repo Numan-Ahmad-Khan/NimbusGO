@@ -143,7 +143,11 @@ export default function Landing() {
                             tracking-tighter
                             text-white
                         ">
-                            N
+                            <img 
+                            src="/pictures/NimbusGO_Full.png"
+                            alt="NimbusGO"
+                            className="w-64 object-contain"
+                            />
                         </span>
                     </div>
 

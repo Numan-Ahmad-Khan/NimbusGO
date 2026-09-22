@@ -1,4 +1,4 @@
-import Logo from "../components/Logo";
+import { LogoWithName } from "../components/Logo";
 import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
@@ -9,7 +9,7 @@ export default function Landing() {
 
             {/* Navbar */}
             <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-                <Logo />
+                <LogoWithName />
 
                 <button
                     onClick={() => navigate("/login")}

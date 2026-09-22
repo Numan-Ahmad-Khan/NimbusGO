@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import {LogoOnly} from "../components/Logo";
 import AuthInput from "../components/AuthInput";
 import Button from "../components/Button";
 import { login } from "../services/auth";
@@ -74,21 +74,9 @@ export default function Login() {
                     {/* Heading */}
                     <div className="text-center">
 
-                        <div className="
-                            mx-auto
-                            flex
-                            h-12
-                            w-12
-                            items-center
-                            justify-center
-                            rounded-2xl
-                            bg-black
-                            text-lg
-                            font-bold
-                            text-white
-                        ">
-                            N
-                        </div>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center">
+                        <LogoOnly />
+                    </div>
 
                         <h1 className="
                             mt-6

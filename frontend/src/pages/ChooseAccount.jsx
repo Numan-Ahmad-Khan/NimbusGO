@@ -101,7 +101,11 @@ export default function ChooseAccount() {
                             font-bold
                             text-white
                         ">
-                            C
+                            <img
+                                src="/pictures/User-favicon.png"
+                                alt="Customer"
+                                className="h-9 w-9 rounded-lg object-contain"
+                            />
                         </div>
 
                         <h2 className="
@@ -192,7 +196,11 @@ export default function ChooseAccount() {
                             font-bold
                             text-white
                         ">
-                            R
+                            <img
+                                src="/pictures/Rider-favicon.png"
+                                alt="Rider"
+                                className="h-9 w-9 rounded-lg object-contain"
+                            />
                         </div>
 
                         <h2 className="

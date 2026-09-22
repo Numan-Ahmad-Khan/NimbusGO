@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/auth";
-import Logo from "../components/Logo";
+import {LogoOnly} from "../components/Logo";
 
 export default function CustomerDashboard() {
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function CustomerDashboard() {
                     py-5
                 ">
 
-                    <Logo />
+                    <LogoOnly />
 
                     <div className="flex items-center gap-4">
 

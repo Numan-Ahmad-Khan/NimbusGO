@@ -1,5 +1,8 @@
 const authService = require("../services/auth.service");
-const { signupSchema, loginSchema } = require("../validators/auth.validator");
+const {
+    signupSchema,
+    loginSchema
+} = require("../validators/auth.validator");
 const jwt = require("jsonwebtoken");
 
 const signup = async (req, res, next) => {
@@ -14,7 +17,12 @@ const signup = async (req, res, next) => {
     }
 
     try {
-        const { name, email, password } = result.data;
+        const {
+            name,
+            email,
+            password
+        } = result.data;
+
         const role = req.body.role;
 
         const createdUser = await authService.signupUser(
@@ -46,7 +54,10 @@ const login = async (req, res, next) => {
     }
 
     try {
-        const { email, password } = result.data;
+        const {
+            email,
+            password
+        } = result.data;
 
         const user = await authService.loginUser(
             email,
@@ -69,7 +80,8 @@ const login = async (req, res, next) => {
         return res.json({
             msg: "Logged In",
             token,
-            user: user.id
+            user: user.id,
+            isVerified: user.isVerified
         });
 
     } catch (error) {
@@ -77,8 +89,8 @@ const login = async (req, res, next) => {
     }
 };
 
-const riderSignup = async (req, res, next) => {
 
+const riderSignup = async (req, res, next) => {
     const result = signupSchema.safeParse(req.body);
 
     if (!result.success) {
@@ -90,7 +102,11 @@ const riderSignup = async (req, res, next) => {
     }
 
     try {
-        const { name, email, password } = result.data;
+        const {
+            name,
+            email,
+            password
+        } = result.data;
 
         const createdRider = await authService.signupRider(
             name,
@@ -111,8 +127,8 @@ const riderSignup = async (req, res, next) => {
     }
 };
 
-const riderLogin = async (req, res, next) => {
 
+const riderLogin = async (req, res, next) => {
     const result = loginSchema.safeParse(req.body);
 
     if (!result.success) {
@@ -122,7 +138,10 @@ const riderLogin = async (req, res, next) => {
     }
 
     try {
-        const { email, password } = result.data;
+        const {
+            email,
+            password
+        } = result.data;
 
         const rider = await authService.loginRider(
             email,

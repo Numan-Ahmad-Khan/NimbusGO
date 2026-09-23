@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogoOnly } from "../../components/Logo";
 import Button from "../../components/Button";
@@ -13,7 +13,14 @@ export default function VerifyOTP() {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
 
+    const otpRequested = useRef(false);
+
     useEffect(() => {
+        if (otpRequested.current) {
+            return;
+        }
+
+        otpRequested.current = true;
         handleGenerateOTP();
     }, []);
 
@@ -24,9 +31,20 @@ export default function VerifyOTP() {
 
         try {
             const data = await generateOTP();
+
             setMessage(data.message);
+
         } catch (error) {
+            if (error.message === "User is already verified") {
+                navigate("/customer/dashboard", {
+                    replace: true
+                });
+
+                return;
+            }
+
             setError(error.message);
+
         } finally {
             setSending(false);
         }
@@ -46,9 +64,13 @@ export default function VerifyOTP() {
         try {
             await verifyOTP(otp);
 
-            navigate("/customer/dashboard");
+            navigate("/customer/dashboard", {
+                replace: true
+            });
+
         } catch (error) {
             setError(error.message);
+
         } finally {
             setLoading(false);
         }
@@ -64,6 +86,7 @@ export default function VerifyOTP() {
 
     return (
         <div className="min-h-screen bg-[#fafafa]">
+
             <div className="mx-auto max-w-6xl px-6 py-6">
                 <button
                     onClick={() => navigate("/")}
@@ -83,6 +106,7 @@ export default function VerifyOTP() {
                 <div className="w-full max-w-md">
 
                     <div className="text-center">
+
                         <div className="
                             mx-auto flex h-12 w-12
                             items-center justify-center
@@ -102,16 +126,19 @@ export default function VerifyOTP() {
                             We sent a 6-digit verification code
                             to your email.
                         </p>
+
                     </div>
 
                     <div className="
                         mt-8 rounded-3xl border border-neutral-200
                         bg-white p-7 shadow-sm
                     ">
+
                         <form
                             onSubmit={handleSubmit}
                             className="space-y-5"
                         >
+
                             <div>
                                 <label className="
                                     mb-2 block text-sm font-medium
@@ -167,6 +194,7 @@ export default function VerifyOTP() {
                             >
                                 Verify OTP
                             </Button>
+
                         </form>
 
                         <div className="
@@ -193,6 +221,7 @@ export default function VerifyOTP() {
                                 {sending ? "Sending..." : "Send again"}
                             </button>
                         </div>
+
                     </div>
                 </div>
             </main>

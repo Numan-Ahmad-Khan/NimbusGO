@@ -14,11 +14,22 @@ router.get(
     riderController.getMe
 );
 
-router.get(
+router.patch(
     "/rider/update_order",
     authentication,
     authorization("RIDER"),
     riderController.updateOrder
 );
-
+router.patch(
+    "/rider/location",
+    authentication,
+    authorization("RIDER"),
+    riderController.updateLocation
+);
+router.get(
+    "/rider/nearby-orders",
+    authentication,
+    authorization("RIDER"),
+    riderController.getNearbyOrders
+);
 module.exports = router;

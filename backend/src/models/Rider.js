@@ -49,4 +49,5 @@ const Rider = db.define("Rider", {
     }
 })
 
+
 module.exports = Rider

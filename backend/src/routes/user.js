@@ -9,47 +9,56 @@ const userController = require("../controllers/user.controller");
 const router = express.Router();
 
 router.get(
-  "/user/me",
-  authentication,
-  authorization("USER"),
-  userController.getMe,
+    "/user/me",
+    authentication,
+    authorization("USER"),
+    userController.getMe,
 );
 
 router.post(
-  "/user/place_order",
-  authentication,
-  isVerified,
-  rateLimiter("order", 5, 600),
-  authorization("USER"),
-  userController.placeOrder,
+    "/user/preview_order",
+    authentication,
+    isVerified,
+    authorization("USER"),
+    userController.previewOrder,
+);
+
+router.post(
+    "/user/place_order",
+    authentication,
+    isVerified,
+    rateLimiter("order", 5, 600),
+    authorization("USER"),
+    userController.placeOrder,
 );
 
 router.get(
-  "/user/track_order/:id",
-  authentication,
-  authorization("USER"),
-  userController.trackOrder,
+    "/user/track_order/:id",
+    authentication,
+    authorization("USER"),
+    userController.trackOrder,
 );
 
 router.patch(
-  "/user/change_password",
-  authentication,
-  authorization("USER"),
-  userController.changePassword,
+    "/user/change_password",
+    authentication,
+    authorization("USER"),
+    userController.changePassword,
 );
 
 router.patch(
-  "/user/change_account_status",
-  authentication,
-  authorization("USER"),
-  userController.changeAccountStatus,
+    "/user/change_account_status",
+    authentication,
+    authorization("USER"),
+    userController.changeAccountStatus,
 );
 
 router.delete(
-  "/user/delete_account",
-  authentication,
-  authorization("USER"),
-  userController.deleteAccount,
+    "/user/delete_account",
+    authentication,
+    authorization("USER"),
+    userController.deleteAccount,
 );
+
 
 module.exports = router;

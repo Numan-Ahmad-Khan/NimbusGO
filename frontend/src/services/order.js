@@ -2,10 +2,14 @@ import { getToken } from "./auth";
 
 const API_URL = "https://nimbusgo-bck.vercel.app";
 // const API_URL = "http://localhost:6600";
+
+
 async function handleResponse(response) {
-    const data = await response.json().catch(() => ({}));
+    const data =
+        await response.json().catch(() => ({}));
 
     if (!response.ok) {
+
         if (data.msg) {
             throw new Error(data.msg);
         }
@@ -15,27 +19,73 @@ async function handleResponse(response) {
         }
 
         if (data.errors) {
-            throw new Error("Please check your input.");
+            throw new Error(
+                "Please check your input."
+            );
         }
 
-        throw new Error("Something went wrong.");
+        throw new Error(
+            "Something went wrong."
+        );
     }
 
     return data;
 }
 
+
+/*
+ * PREVIEW ORDER PRICE
+ */
+
+export async function previewOrder(orderData) {
+
+    const token = getToken();
+
+    const response = await fetch(
+        `${API_URL}/user/preview_order`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json",
+
+                Authorization:
+                    `Bearer ${token}`
+            },
+
+            body:
+                JSON.stringify(orderData)
+        }
+    );
+
+    return handleResponse(response);
+}
+
+
+/*
+ * CREATE ORDER
+ */
+
 export async function placeOrder(orderData) {
+
     const token = getToken();
 
     const response = await fetch(
         `${API_URL}/user/place_order`,
         {
             method: "POST",
+
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+                "Content-Type":
+                    "application/json",
+
+                Authorization:
+                    `Bearer ${token}`
             },
-            body: JSON.stringify(orderData)
+
+            body:
+                JSON.stringify(orderData)
         }
     );
 

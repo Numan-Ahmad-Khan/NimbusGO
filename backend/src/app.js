@@ -14,6 +14,7 @@ const rawBody = express.raw({ type: "application/json" });
 app.use(
     cors({
         origin: "https://nimbus-go.vercel.app"
+        // origin: "http://localhost:5173"
     })
 );
 app.use("/payment", rawBody, payment);

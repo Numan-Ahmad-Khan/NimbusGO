@@ -28,7 +28,7 @@ export default function Login() {
 
             console.log("Login successful:", data);
 
-            navigate("/customer/dashboard");
+            navigate("/verify-otp");;
 
         } catch (error) {
             setError(error.message);

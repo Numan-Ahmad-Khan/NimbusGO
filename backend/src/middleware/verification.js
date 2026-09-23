@@ -2,7 +2,7 @@ const User = require("../models/Users");
 
 const isVerified = async (req, res, next) => {
     try {
-        const user = await User.findOne({where: req.user.userId});
+        const user = await User.findOne({where: {id: req.user.userId}});
         if (!user) {
             return res.status(404).json({
                 message: "User not found"

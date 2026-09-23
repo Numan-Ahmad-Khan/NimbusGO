@@ -4,8 +4,9 @@ import Landing from "./pages/Landing";
 import ChooseAccount from "./pages/ChooseAccount";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import VerifyOTP from "./pages/customer/VerifyOTP";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import PlaceOrder from "./pages/customer/PlaceOrder";
 function App() {
     return (
         <BrowserRouter>
@@ -39,10 +40,26 @@ function App() {
                     }
                 />
                 <Route
+                    path="/verify-otp"
+                    element={
+                        <ProtectedRoute>
+                            <VerifyOTP />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
                     path="/customer/dashboard"
                     element={
                         <ProtectedRoute>
                             <CustomerDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/place-order"
+                    element={
+                        <ProtectedRoute>
+                            <PlaceOrder />
                         </ProtectedRoute>
                     }
                 />

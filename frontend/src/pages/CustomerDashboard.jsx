@@ -123,7 +123,7 @@ export default function CustomerDashboard() {
                     {/* Send package */}
                     <button
                         onClick={() => {
-                            console.log("Send package clicked");
+                            navigate("/place-order");;
                         }}
                         className="
                             group

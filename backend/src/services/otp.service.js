@@ -33,7 +33,7 @@ const generateAndSendOTP = async (userId) => {
 
     await sendEmail(
         user.email,
-        "Your FastLy Verification OTP",
+        "Your NimbusGO Verification OTP",
         `
             <h2>Email Verification</h2>
 
@@ -56,7 +56,7 @@ const generateAndSendOTP = async (userId) => {
 
             <p>
                 Thank you,<br>
-                FastLy
+                NimbusGO
             </p>
         `
     );

@@ -11,7 +11,7 @@ import RiderLogin from "./pages/rider/RiderLogin";
 import RiderVerification from "./pages/rider/RiderVerification";
 import RiderDashboard from "./pages/rider/RiderDashboard";
 import RiderSignup from "./pages/rider/RiderSignup";
-import OrderSuccess from "./pages/Customer/OrderSuccess";
+import OrderSuccess from "./pages/customer/OrderSuccess";
 
 
 function App() {

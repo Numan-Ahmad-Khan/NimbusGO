@@ -33,6 +33,13 @@ router.post(
 );
 
 router.get(
+    "/user/orders",
+    authentication,
+    authorization("USER"),
+    userController.getOrders,
+);
+
+router.get(
     "/user/track_order/:id",
     authentication,
     authorization("USER"),
@@ -59,6 +66,5 @@ router.delete(
     authorization("USER"),
     userController.deleteAccount,
 );
-
 
 module.exports = router;

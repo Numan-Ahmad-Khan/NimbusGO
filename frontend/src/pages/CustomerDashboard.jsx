@@ -1,24 +1,144 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { logout } from "../services/auth";
-import {LogoOnly} from "../components/Logo";
+import { getOrders } from "../services/order";
+
+import { LogoOnly } from "../components/Logo";
+
 
 export default function CustomerDashboard() {
+
     const navigate = useNavigate();
 
-    function handleLogout() {
-        logout();
-        navigate("/", { replace: true });
+
+    const [orders, setOrders] =
+        useState([]);
+
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState("");
+
+
+    async function loadOrders() {
+
+        setError("");
+        setLoading(true);
+
+
+        try {
+
+            const data =
+                await getOrders();
+
+
+            setOrders(
+                data.orders || []
+            );
+
+        } catch (error) {
+
+            console.log(
+                "Failed to load orders:",
+                error
+            );
+
+            setError(
+                error.message
+            );
+
+        } finally {
+
+            setLoading(false);
+        }
     }
 
-    return (
-        <div className="min-h-screen bg-[#fafafa]">
 
-            {/* Navbar */}
+    useEffect(() => {
+        loadOrders();
+    }, []);
+
+
+    function handleLogout() {
+
+        logout();
+
+        navigate(
+            "/",
+            {
+                replace: true
+            }
+        );
+    }
+
+
+    function formatDate(date) {
+
+        if (!date) {
+            return "";
+        }
+
+
+        return new Date(
+            date
+        ).toLocaleDateString(
+            "en-IN",
+            {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            }
+        );
+    }
+
+
+    function getStatusStyle(status) {
+
+        if (status === "DELIVERED") {
+            return `
+                bg-green-50
+                text-green-700
+                border-green-200
+            `;
+        }
+
+
+        if (
+            status === "FAILED" ||
+            status === "REJECTED"
+        ) {
+            return `
+                bg-red-50
+                text-red-700
+                border-red-200
+            `;
+        }
+
+
+        return `
+            bg-neutral-100
+            text-neutral-700
+            border-neutral-200
+        `;
+    }
+
+
+    return (
+        <div className="
+            min-h-screen
+            bg-[#fafafa]
+        ">
+
+            {/* NAVBAR */}
+
             <nav className="
                 border-b
                 border-neutral-200
                 bg-white
             ">
+
                 <div className="
                     mx-auto
                     flex
@@ -31,7 +151,12 @@ export default function CustomerDashboard() {
 
                     <LogoOnly />
 
-                    <div className="flex items-center gap-4">
+
+                    <div className="
+                        flex
+                        items-center
+                        gap-4
+                    ">
 
                         <span className="
                             hidden
@@ -41,6 +166,7 @@ export default function CustomerDashboard() {
                         ">
                             Customer
                         </span>
+
 
                         <button
                             onClick={handleLogout}
@@ -64,10 +190,12 @@ export default function CustomerDashboard() {
                     </div>
 
                 </div>
+
             </nav>
 
 
-            {/* Main */}
+            {/* MAIN */}
+
             <main className="
                 mx-auto
                 max-w-6xl
@@ -76,7 +204,9 @@ export default function CustomerDashboard() {
                 pt-12
             ">
 
-                {/* Welcome */}
+
+                {/* WELCOME */}
+
                 <div>
 
                     <p className="
@@ -86,6 +216,7 @@ export default function CustomerDashboard() {
                     ">
                         Customer Dashboard
                     </p>
+
 
                     <h1 className="
                         mt-2
@@ -98,6 +229,7 @@ export default function CustomerDashboard() {
                         What would you like to do?
                     </h1>
 
+
                     <p className="
                         mt-4
                         max-w-xl
@@ -105,14 +237,16 @@ export default function CustomerDashboard() {
                         leading-7
                         text-neutral-500
                     ">
-                        Send packages quickly and keep track of
-                        your deliveries from one place.
+                        Send packages quickly and keep
+                        track of your deliveries from
+                        one place.
                     </p>
 
                 </div>
 
 
-                {/* Main actions */}
+                {/* MAIN ACTIONS */}
+
                 <div className="
                     mt-10
                     grid
@@ -120,11 +254,15 @@ export default function CustomerDashboard() {
                     md:grid-cols-2
                 ">
 
-                    {/* Send package */}
+
+                    {/* SEND PACKAGE */}
+
                     <button
-                        onClick={() => {
-                            navigate("/place-order");;
-                        }}
+                        onClick={() =>
+                            navigate(
+                                "/place-order"
+                            )
+                        }
                         className="
                             group
                             rounded-3xl
@@ -154,6 +292,7 @@ export default function CustomerDashboard() {
                             →
                         </div>
 
+
                         <h2 className="
                             mt-7
                             text-2xl
@@ -163,6 +302,7 @@ export default function CustomerDashboard() {
                             Send a package
                         </h2>
 
+
                         <p className="
                             mt-3
                             max-w-sm
@@ -170,10 +310,11 @@ export default function CustomerDashboard() {
                             leading-6
                             text-neutral-300
                         ">
-                            Create a new delivery, add pickup
-                            and drop locations, and get your
-                            delivery price.
+                            Create a new delivery, add
+                            pickup and drop locations,
+                            and get your delivery price.
                         </p>
+
 
                         <div className="
                             mt-8
@@ -186,11 +327,16 @@ export default function CustomerDashboard() {
                     </button>
 
 
-                    {/* My orders */}
+                    {/* MY ORDERS */}
+
                     <button
-                        onClick={() => {
-                            console.log("My orders clicked");
-                        }}
+                        onClick={() =>
+                            document
+                                .getElementById("orders")
+                                ?.scrollIntoView({
+                                    behavior: "smooth"
+                                })
+                        }
                         className="
                             group
                             rounded-3xl
@@ -219,6 +365,7 @@ export default function CustomerDashboard() {
                             ≡
                         </div>
 
+
                         <h2 className="
                             mt-7
                             text-2xl
@@ -227,6 +374,7 @@ export default function CustomerDashboard() {
                         ">
                             My orders
                         </h2>
+
 
                         <p className="
                             mt-3
@@ -239,6 +387,7 @@ export default function CustomerDashboard() {
                             payment status, and current
                             delivery progress.
                         </p>
+
 
                         <div className="
                             mt-8
@@ -254,8 +403,12 @@ export default function CustomerDashboard() {
                 </div>
 
 
-                {/* Recent orders */}
-                <section className="mt-12">
+                {/* ORDERS */}
+
+                <section
+                    id="orders"
+                    className="mt-12"
+                >
 
                     <div className="
                         flex
@@ -264,6 +417,7 @@ export default function CustomerDashboard() {
                     ">
 
                         <div>
+
                             <h2 className="
                                 text-xl
                                 font-bold
@@ -272,81 +426,347 @@ export default function CustomerDashboard() {
                                 Recent orders
                             </h2>
 
+
                             <p className="
                                 mt-1
                                 text-sm
                                 text-neutral-500
                             ">
-                                Your latest deliveries will appear here.
+                                Your latest deliveries.
                             </p>
+
                         </div>
 
+
                         <button
-                            onClick={() => {
-                                console.log("View all orders clicked");
-                            }}
+                            onClick={loadOrders}
+                            disabled={loading}
                             className="
                                 text-sm
                                 font-semibold
                                 text-black
                                 hover:underline
+                                disabled:opacity-50
                             "
                         >
-                            View all
+                            {loading
+                                ? "Loading..."
+                                : "Refresh"}
                         </button>
 
                     </div>
 
 
-                    {/* Empty state */}
-                    <div className="
-                        mt-6
-                        rounded-3xl
-                        border
-                        border-dashed
-                        border-neutral-300
-                        bg-white
-                        px-6
-                        py-14
-                        text-center
-                    ">
+                    {/* ERROR */}
+
+                    {error && (
+                        <div className="
+                            mt-6
+                            rounded-2xl
+                            border
+                            border-red-200
+                            bg-red-50
+                            px-5
+                            py-4
+                            text-sm
+                            text-red-600
+                        ">
+                            {error}
+                        </div>
+                    )}
+
+
+                    {/* LOADING */}
+
+                    {loading && (
+                        <div className="
+                            mt-6
+                            rounded-3xl
+                            border
+                            border-neutral-200
+                            bg-white
+                            px-6
+                            py-14
+                            text-center
+                        ">
+
+                            <p className="
+                                text-sm
+                                text-neutral-500
+                            ">
+                                Loading your orders...
+                            </p>
+
+                        </div>
+                    )}
+
+
+                    {/* EMPTY */}
+
+                    {!loading &&
+                        !error &&
+                        orders.length === 0 && (
 
                         <div className="
-                            mx-auto
-                            flex
-                            h-12
-                            w-12
-                            items-center
-                            justify-center
-                            rounded-2xl
-                            bg-neutral-100
-                            text-lg
-                            font-bold
+                            mt-6
+                            rounded-3xl
+                            border
+                            border-dashed
+                            border-neutral-300
+                            bg-white
+                            px-6
+                            py-14
+                            text-center
                         ">
-                            —
+
+                            <div className="
+                                mx-auto
+                                flex
+                                h-12
+                                w-12
+                                items-center
+                                justify-center
+                                rounded-2xl
+                                bg-neutral-100
+                                text-lg
+                                font-bold
+                            ">
+                                —
+                            </div>
+
+
+                            <h3 className="
+                                mt-5
+                                text-base
+                                font-semibold
+                            ">
+                                No orders yet
+                            </h3>
+
+
+                            <p className="
+                                mx-auto
+                                mt-2
+                                max-w-sm
+                                text-sm
+                                leading-6
+                                text-neutral-500
+                            ">
+                                Once you create a delivery,
+                                your recent orders will
+                                appear here.
+                            </p>
+
+
+                            <button
+                                onClick={() =>
+                                    navigate(
+                                        "/place-order"
+                                    )
+                                }
+                                className="
+                                    mt-6
+                                    rounded-xl
+                                    bg-black
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    text-white
+                                    transition
+                                    hover:bg-neutral-800
+                                "
+                            >
+                                Create your first order
+                            </button>
+
                         </div>
+                    )}
 
-                        <h3 className="
-                            mt-5
-                            text-base
-                            font-semibold
+
+                    {/* ORDERS LIST */}
+
+                    {!loading &&
+                        orders.length > 0 && (
+
+                        <div className="
+                            mt-6
+                            space-y-4
                         ">
-                            No orders yet
-                        </h3>
 
-                        <p className="
-                            mx-auto
-                            mt-2
-                            max-w-sm
-                            text-sm
-                            leading-6
-                            text-neutral-500
-                        ">
-                            Once you create a delivery,
-                            your recent orders will appear here.
-                        </p>
+                            {orders.map(
+                                (order) => (
 
-                    </div>
+                                <div
+                                    key={order.id}
+                                    className="
+                                        rounded-3xl
+                                        border
+                                        border-neutral-200
+                                        bg-white
+                                        p-6
+                                        shadow-sm
+                                    "
+                                >
+
+                                    <div className="
+                                        flex
+                                        flex-col
+                                        gap-5
+                                        sm:flex-row
+                                        sm:items-center
+                                        sm:justify-between
+                                    ">
+
+                                        <div>
+
+                                            <p className="
+                                                text-xs
+                                                text-neutral-400
+                                            ">
+                                                Order
+                                            </p>
+
+
+                                            <h3 className="
+                                                mt-1
+                                                text-lg
+                                                font-bold
+                                            ">
+                                                {order.orderName}
+                                            </h3>
+
+
+                                            <p className="
+                                                mt-1
+                                                break-all
+                                                text-xs
+                                                text-neutral-400
+                                            ">
+                                                #{order.id}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div className="
+                                            flex
+                                            items-center
+                                            gap-3
+                                        ">
+
+                                            <span className={`
+                                                rounded-full
+                                                border
+                                                px-3
+                                                py-1.5
+                                                text-xs
+                                                font-semibold
+                                                ${getStatusStyle(
+                                                    order.status
+                                                )}
+                                            `}>
+                                                {order.status}
+                                            </span>
+
+
+                                            <span className="
+                                                text-lg
+                                                font-bold
+                                            ">
+                                                ₹
+                                                {Number(
+                                                    order.finalAmount
+                                                ).toFixed(2)}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div className="
+                                        mt-5
+                                        grid
+                                        gap-4
+                                        border-t
+                                        border-neutral-100
+                                        pt-5
+                                        sm:grid-cols-3
+                                    ">
+
+                                        <div>
+
+                                            <p className="
+                                                text-xs
+                                                text-neutral-400
+                                            ">
+                                                Payment
+                                            </p>
+
+
+                                            <p className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                            ">
+                                                {order.paymentMethod}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <p className="
+                                                text-xs
+                                                text-neutral-400
+                                            ">
+                                                Payment status
+                                            </p>
+
+
+                                            <p className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                            ">
+                                                {order.paymentStatus}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <p className="
+                                                text-xs
+                                                text-neutral-400
+                                            ">
+                                                Ordered
+                                            </p>
+
+
+                                            <p className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                            ">
+                                                {formatDate(
+                                                    order.createdAt
+                                                )}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+                    )}
 
                 </section>
 

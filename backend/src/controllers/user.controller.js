@@ -57,6 +57,77 @@ const getMe = async (req, res) => {
     }
 };
 
+const getOrders = async (req, res) => {
+    try {
+
+        const user = await User.findOne({
+            where: {
+                id: req.user.userId,
+            },
+        });
+
+
+        if (!user) {
+            return res.status(404).json({
+                msg: "User not found",
+            });
+        }
+
+
+        if (!user.isActive) {
+            return res.status(400).json({
+                msg:
+                    "User account deactivated and orders are unavailable.",
+            });
+        }
+
+
+        const orders = await Order.findAll({
+            where: {
+                userId: req.user.userId,
+            },
+
+            attributes: [
+                "id",
+                "orderName",
+                "orderDetails",
+                "orderWeight",
+                "orderLength",
+                "orderBreadth",
+                "orderHeight",
+                "price",
+                "originalAmount",
+                "discountAmount",
+                "finalAmount",
+                "couponCode",
+                "riderId",
+                "paymentMethod",
+                "paymentStatus",
+                "status",
+                "createdAt",
+                "updatedAt",
+            ],
+
+            order: [
+                ["createdAt", "DESC"],
+            ],
+        });
+
+
+        return res.json({
+            orders,
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+            msg:
+                "Internal server error",
+        });
+    }
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -1865,18 +1936,12 @@ const deleteAccount =
 */
 
 module.exports = {
-
     getMe,
-
+    getOrders,
     previewOrder,
-
     placeOrder,
-
     trackOrder,
-
     changePassword,
-
     changeAccountStatus,
-
-    deleteAccount,
+    deleteAccount
 };

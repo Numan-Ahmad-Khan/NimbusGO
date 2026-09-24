@@ -1,7 +1,7 @@
 import { getToken } from "./auth";
 
-const API_URL = "https://nimbusgo-bck.vercel.app";
-// const API_URL = "http://localhost:6600";
+// const API_URL = "https://nimbusgo-bck.vercel.app";
+const API_URL = "http://localhost:6600";
 
 
 async function handleResponse(response) {
@@ -9,7 +9,6 @@ async function handleResponse(response) {
         await response.json().catch(() => ({}));
 
     if (!response.ok) {
-
         if (data.msg) {
             throw new Error(data.msg);
         }
@@ -33,12 +32,7 @@ async function handleResponse(response) {
 }
 
 
-/*
- * PREVIEW ORDER PRICE
- */
-
 export async function previewOrder(orderData) {
-
     const token = getToken();
 
     const response = await fetch(
@@ -63,12 +57,7 @@ export async function previewOrder(orderData) {
 }
 
 
-/*
- * CREATE ORDER
- */
-
 export async function placeOrder(orderData) {
-
     const token = getToken();
 
     const response = await fetch(
@@ -86,6 +75,25 @@ export async function placeOrder(orderData) {
 
             body:
                 JSON.stringify(orderData)
+        }
+    );
+
+    return handleResponse(response);
+}
+
+
+export async function getOrders() {
+    const token = getToken();
+
+    const response = await fetch(
+        `${API_URL}/user/orders`,
+        {
+            method: "GET",
+
+            headers: {
+                Authorization:
+                    `Bearer ${token}`
+            }
         }
     );
 

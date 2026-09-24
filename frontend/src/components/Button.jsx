@@ -1,6 +1,7 @@
 export default function Button({
     children,
     type = "button",
+    onClick,
     loading = false,
     loadingText = "Loading...",
     disabled = false
@@ -8,6 +9,7 @@ export default function Button({
     return (
         <button
             type={type}
+            onClick={onClick}
             disabled={disabled || loading}
             className="
                 flex

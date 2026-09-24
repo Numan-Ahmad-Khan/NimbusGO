@@ -11,6 +11,8 @@ import RiderLogin from "./pages/rider/RiderLogin";
 import RiderVerification from "./pages/rider/RiderVerification";
 import RiderDashboard from "./pages/rider/RiderDashboard";
 import RiderSignup from "./pages/rider/RiderSignup";
+import OrderSuccess from "./pages/Customer/OrderSuccess";
+
 
 function App() {
     return (
@@ -85,6 +87,14 @@ function App() {
                 <Route
                     path="/rider/signup"
                     element={<RiderSignup />}
+                />
+                <Route
+                    path="/order-success"
+                    element={
+                        <ProtectedRoute>
+                            <OrderSuccess />
+                        </ProtectedRoute>
+                    }
                 />
             </Routes>
         </BrowserRouter>

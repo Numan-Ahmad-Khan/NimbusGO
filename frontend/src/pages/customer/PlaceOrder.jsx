@@ -1,62 +1,80 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { logout } from "../../services/auth";
-import { getOrders } from "../../services/order";
+import {
+    previewOrder,
+    placeOrder
+} from "../../services/order";
+
 import { LogoOnly } from "../../components/Logo";
 
-export default function CustomerDashboard() {
+
+export default function PlaceOrder() {
 
     const navigate = useNavigate();
 
 
-    const [orders, setOrders] =
-        useState([]);
+    const [step, setStep] =
+        useState(1);
 
     const [loading, setLoading] =
-        useState(true);
+        useState(false);
+
+    const [previewLoading, setPreviewLoading] =
+        useState(false);
 
     const [error, setError] =
         useState("");
 
 
-    async function loadOrders() {
+    const [form, setForm] = useState({
+
+        orderName: "",
+        orderDetails: "",
+
+        orderWeight: "",
+        orderLength: "",
+        orderBreadth: "",
+        orderHeight: "",
+
+        pickupStreet: "",
+        pickupLandmark: "",
+        pickupPincode: "",
+        pickupLatitude: "",
+        pickupLongitude: "",
+
+        dropStreet: "",
+        dropLandmark: "",
+        dropPincode: "",
+        dropLatitude: "",
+        dropLongitude: "",
+
+        paymentMethod: "COD",
+
+        couponCode: ""
+
+    });
+
+
+    const [priceData, setPriceData] =
+        useState(null);
+
+
+    function updateField(
+        field,
+        value
+    ) {
+
+        setForm(
+            (previous) => ({
+                ...previous,
+                [field]: value
+            })
+        );
 
         setError("");
-        setLoading(true);
-
-
-        try {
-
-            const data =
-                await getOrders();
-
-
-            setOrders(
-                data.orders || []
-            );
-
-        } catch (error) {
-
-            console.log(
-                "Failed to load orders:",
-                error
-            );
-
-            setError(
-                error.message
-            );
-
-        } finally {
-
-            setLoading(false);
-        }
     }
-
-
-    useEffect(() => {
-        loadOrders();
-    }, []);
 
 
     function handleLogout() {
@@ -72,54 +90,301 @@ export default function CustomerDashboard() {
     }
 
 
-    function formatDate(date) {
+    function validateStep() {
 
-        if (!date) {
-            return "";
+        setError("");
+
+
+        if (step === 1) {
+
+            if (
+                !form.pickupStreet ||
+                !form.pickupPincode
+            ) {
+                setError(
+                    "Please enter the pickup address and pincode."
+                );
+
+                return false;
+            }
+
+            return true;
         }
 
 
-        return new Date(
-            date
-        ).toLocaleDateString(
-            "en-IN",
-            {
-                day: "numeric",
-                month: "short",
-                year: "numeric"
+        if (step === 2) {
+
+            if (
+                !form.dropStreet ||
+                !form.dropPincode
+            ) {
+                setError(
+                    "Please enter the drop address and pincode."
+                );
+
+                return false;
             }
+
+            return true;
+        }
+
+
+        if (step === 3) {
+
+            if (!form.orderName) {
+
+                setError(
+                    "Please enter a package name."
+                );
+
+                return false;
+            }
+
+
+            if (!form.orderWeight) {
+
+                setError(
+                    "Please enter the package weight."
+                );
+
+                return false;
+            }
+
+
+            if (
+                !form.orderLength ||
+                !form.orderBreadth ||
+                !form.orderHeight
+            ) {
+
+                setError(
+                    "Please enter the package dimensions."
+                );
+
+                return false;
+            }
+
+            return true;
+        }
+
+
+        return true;
+    }
+
+
+    function buildOrderData() {
+
+        return {
+
+            orderName:
+                form.orderName,
+
+            orderDetails:
+                form.orderDetails,
+
+            orderWeight:
+                Number(form.orderWeight),
+
+            orderLength:
+                Number(form.orderLength),
+
+            orderBreadth:
+                Number(form.orderBreadth),
+
+            orderHeight:
+                Number(form.orderHeight),
+
+
+            pickup: {
+
+                street:
+                    form.pickupStreet,
+
+                landmark:
+                    form.pickupLandmark,
+
+                pincode:
+                    form.pickupPincode,
+
+                latitude:
+                    form.pickupLatitude
+                        ? Number(form.pickupLatitude)
+                        : null,
+
+                longitude:
+                    form.pickupLongitude
+                        ? Number(form.pickupLongitude)
+                        : null
+            },
+
+
+            drop: {
+
+                street:
+                    form.dropStreet,
+
+                landmark:
+                    form.dropLandmark,
+
+                pincode:
+                    form.dropPincode,
+
+                latitude:
+                    form.dropLatitude
+                        ? Number(form.dropLatitude)
+                        : null,
+
+                longitude:
+                    form.dropLongitude
+                        ? Number(form.dropLongitude)
+                        : null
+            },
+
+
+            paymentMethod:
+                form.paymentMethod,
+
+
+            ...(form.couponCode
+                ? {
+                    couponCode:
+                        form.couponCode
+                }
+                : {})
+        };
+    }
+
+
+    async function handlePreview() {
+
+        if (!validateStep()) {
+            return;
+        }
+
+
+        setPreviewLoading(true);
+        setError("");
+
+
+        try {
+
+            const data =
+                await previewOrder(
+                    buildOrderData()
+                );
+
+
+            setPriceData(data);
+
+            setStep(4);
+
+        } catch (error) {
+
+            console.log(
+                "Preview order failed:",
+                error
+            );
+
+            setError(
+                error.message
+            );
+
+        } finally {
+
+            setPreviewLoading(false);
+        }
+    }
+
+
+    async function handlePlaceOrder() {
+
+        setLoading(true);
+        setError("");
+
+
+        try {
+
+            const data =
+                await placeOrder(
+                    buildOrderData()
+                );
+
+
+            sessionStorage.setItem(
+                "nimbusgo_order_success",
+                JSON.stringify(data)
+            );
+
+
+            navigate(
+                "/order-success",
+                {
+                    state: {
+                        order: data
+                    },
+                    replace: true
+                }
+            );
+
+        } catch (error) {
+
+            console.log(
+                "Place order failed:",
+                error
+            );
+
+            setError(
+                error.message
+            );
+
+        } finally {
+
+            setLoading(false);
+        }
+    }
+
+
+    function goNext() {
+
+        if (!validateStep()) {
+            return;
+        }
+
+
+        if (step === 3) {
+
+            handlePreview();
+
+            return;
+        }
+
+
+        setStep(
+            (previous) =>
+                previous + 1
         );
     }
 
 
-    function getStatusStyle(status) {
+    function goBack() {
 
-        if (status === "DELIVERED") {
-            return `
-                bg-green-50
-                text-green-700
-                border-green-200
-            `;
+        setError("");
+
+
+        if (step === 1) {
+
+            navigate(
+                "/customer/dashboard"
+            );
+
+            return;
         }
 
 
-        if (
-            status === "FAILED" ||
-            status === "REJECTED"
-        ) {
-            return `
-                bg-red-50
-                text-red-700
-                border-red-200
-            `;
-        }
-
-
-        return `
-            bg-neutral-100
-            text-neutral-700
-            border-neutral-200
-        `;
+        setStep(
+            (previous) =>
+                previous - 1
+        );
     }
 
 
@@ -128,6 +393,7 @@ export default function CustomerDashboard() {
             min-h-screen
             bg-[#fafafa]
         ">
+
 
             {/* NAVBAR */}
 
@@ -140,7 +406,7 @@ export default function CustomerDashboard() {
                 <div className="
                     mx-auto
                     flex
-                    max-w-6xl
+                    max-w-5xl
                     items-center
                     justify-between
                     px-6
@@ -150,42 +416,24 @@ export default function CustomerDashboard() {
                     <LogoOnly />
 
 
-                    <div className="
-                        flex
-                        items-center
-                        gap-4
-                    ">
-
-                        <span className="
-                            hidden
+                    <button
+                        onClick={handleLogout}
+                        className="
+                            rounded-xl
+                            border
+                            border-neutral-200
+                            bg-white
+                            px-4
+                            py-2
                             text-sm
-                            text-neutral-500
-                            sm:block
-                        ">
-                            Customer
-                        </span>
-
-
-                        <button
-                            onClick={handleLogout}
-                            className="
-                                rounded-xl
-                                border
-                                border-neutral-200
-                                bg-white
-                                px-4
-                                py-2
-                                text-sm
-                                font-medium
-                                text-black
-                                transition
-                                hover:bg-neutral-50
-                            "
-                        >
-                            Logout
-                        </button>
-
-                    </div>
+                            font-medium
+                            text-black
+                            transition
+                            hover:bg-neutral-50
+                        "
+                    >
+                        Logout
+                    </button>
 
                 </div>
 
@@ -196,23 +444,37 @@ export default function CustomerDashboard() {
 
             <main className="
                 mx-auto
-                max-w-6xl
+                max-w-3xl
                 px-6
                 pb-20
-                pt-12
+                pt-10
             ">
 
 
-                {/* WELCOME */}
+                {/* HEADER */}
 
                 <div>
 
+                    <button
+                        onClick={goBack}
+                        className="
+                            text-sm
+                            font-medium
+                            text-neutral-500
+                            hover:text-black
+                        "
+                    >
+                        ← Back
+                    </button>
+
+
                     <p className="
+                        mt-8
                         text-sm
                         font-medium
                         text-neutral-500
                     ">
-                        Customer Dashboard
+                        New delivery
                     </p>
 
 
@@ -222,554 +484,1057 @@ export default function CustomerDashboard() {
                         font-bold
                         tracking-tight
                         text-black
-                        sm:text-5xl
                     ">
-                        What would you like to do?
+                        Send a package
                     </h1>
 
 
                     <p className="
-                        mt-4
-                        max-w-xl
-                        text-base
-                        leading-7
+                        mt-3
+                        text-sm
+                        leading-6
                         text-neutral-500
                     ">
-                        Send packages quickly and keep
-                        track of your deliveries from
-                        one place.
+                        Enter your delivery details
+                        and we'll calculate the price.
                     </p>
 
                 </div>
 
 
-                {/* MAIN ACTIONS */}
+                {/* STEPS */}
 
                 <div className="
-                    mt-10
-                    grid
-                    gap-6
-                    md:grid-cols-2
+                    mt-8
+                    flex
+                    items-center
+                    gap-2
                 ">
 
+                    {[1, 2, 3, 4].map(
+                        (number) => (
 
-                    {/* SEND PACKAGE */}
+                        <div
+                            key={number}
+                            className={`
+                                h-1.5
+                                flex-1
+                                rounded-full
+                                ${
+                                    number <= step
+                                        ? "bg-black"
+                                        : "bg-neutral-200"
+                                }
+                            `}
+                        />
 
-                    <button
-                        onClick={() =>
-                            navigate(
-                                "/place-order"
-                            )
-                        }
-                        className="
-                            group
-                            rounded-3xl
-                            border
-                            border-neutral-200
-                            bg-black
-                            p-8
-                            text-left
-                            text-white
-                            transition
-                            hover:bg-neutral-800
-                        "
-                    >
-
-                        <div className="
-                            flex
-                            h-12
-                            w-12
-                            items-center
-                            justify-center
-                            rounded-2xl
-                            bg-white
-                            text-lg
-                            font-bold
-                            text-black
-                        ">
-                            →
-                        </div>
-
-
-                        <h2 className="
-                            mt-7
-                            text-2xl
-                            font-bold
-                            tracking-tight
-                        ">
-                            Send a package
-                        </h2>
-
-
-                        <p className="
-                            mt-3
-                            max-w-sm
-                            text-sm
-                            leading-6
-                            text-neutral-300
-                        ">
-                            Create a new delivery, add
-                            pickup and drop locations,
-                            and get your delivery price.
-                        </p>
-
-
-                        <div className="
-                            mt-8
-                            text-sm
-                            font-semibold
-                        ">
-                            Create delivery →
-                        </div>
-
-                    </button>
-
-
-                    {/* MY ORDERS */}
-
-                    <button
-                        onClick={() =>
-                            document
-                                .getElementById("orders")
-                                ?.scrollIntoView({
-                                    behavior: "smooth"
-                                })
-                        }
-                        className="
-                            group
-                            rounded-3xl
-                            border
-                            border-neutral-200
-                            bg-white
-                            p-8
-                            text-left
-                            transition
-                            hover:border-neutral-300
-                        "
-                    >
-
-                        <div className="
-                            flex
-                            h-12
-                            w-12
-                            items-center
-                            justify-center
-                            rounded-2xl
-                            bg-black
-                            text-lg
-                            font-bold
-                            text-white
-                        ">
-                            ≡
-                        </div>
-
-
-                        <h2 className="
-                            mt-7
-                            text-2xl
-                            font-bold
-                            tracking-tight
-                        ">
-                            My orders
-                        </h2>
-
-
-                        <p className="
-                            mt-3
-                            max-w-sm
-                            text-sm
-                            leading-6
-                            text-neutral-500
-                        ">
-                            View your previous deliveries,
-                            payment status, and current
-                            delivery progress.
-                        </p>
-
-
-                        <div className="
-                            mt-8
-                            text-sm
-                            font-semibold
-                            text-black
-                        ">
-                            View orders →
-                        </div>
-
-                    </button>
+                    ))}
 
                 </div>
 
 
-                {/* ORDERS */}
+                {/* ERROR */}
 
-                <section
-                    id="orders"
-                    className="mt-12"
-                >
+                {error && (
 
                     <div className="
-                        flex
-                        items-center
-                        justify-between
+                        mt-6
+                        rounded-2xl
+                        border
+                        border-red-200
+                        bg-red-50
+                        px-5
+                        py-4
+                        text-sm
+                        text-red-600
                     ">
+                        {error}
+                    </div>
+
+                )}
+
+
+                {/* FORM CARD */}
+
+                <div className="
+                    mt-8
+                    rounded-3xl
+                    border
+                    border-neutral-200
+                    bg-white
+                    p-6
+                    shadow-sm
+                    sm:p-8
+                ">
+
+
+                    {/* STEP 1 */}
+
+                    {step === 1 && (
 
                         <div>
 
-                            <h2 className="
-                                text-xl
-                                font-bold
-                                tracking-tight
+                            <p className="
+                                text-sm
+                                font-medium
+                                text-neutral-500
                             ">
-                                Recent orders
+                                Step 1
+                            </p>
+
+
+                            <h2 className="
+                                mt-1
+                                text-2xl
+                                font-bold
+                            ">
+                                Pickup location
                             </h2>
 
 
                             <p className="
-                                mt-1
+                                mt-2
                                 text-sm
                                 text-neutral-500
                             ">
-                                Your latest deliveries.
+                                Where should we collect
+                                the package?
                             </p>
 
+
+                            <div className="
+                                mt-8
+                                space-y-5
+                            ">
+
+                                <Field
+                                    label="Street address"
+                                    value={
+                                        form.pickupStreet
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "pickupStreet",
+                                                value
+                                            )
+                                    }
+                                    placeholder="Enter pickup address"
+                                />
+
+
+                                <Field
+                                    label="Landmark"
+                                    value={
+                                        form.pickupLandmark
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "pickupLandmark",
+                                                value
+                                            )
+                                    }
+                                    placeholder="Optional"
+                                />
+
+
+                                <Field
+                                    label="Pincode"
+                                    value={
+                                        form.pickupPincode
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "pickupPincode",
+                                                value
+                                            )
+                                    }
+                                    placeholder="Enter pincode"
+                                    type="number"
+                                />
+
+
+                                <div className="
+                                    grid
+                                    gap-5
+                                    sm:grid-cols-2
+                                ">
+
+                                    <Field
+                                        label="Latitude"
+                                        value={
+                                            form.pickupLatitude
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "pickupLatitude",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Optional"
+                                    />
+
+
+                                    <Field
+                                        label="Longitude"
+                                        value={
+                                            form.pickupLongitude
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "pickupLongitude",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Optional"
+                                    />
+
+                                </div>
+
+                            </div>
+
                         </div>
 
-
-                        <button
-                            onClick={loadOrders}
-                            disabled={loading}
-                            className="
-                                text-sm
-                                font-semibold
-                                text-black
-                                hover:underline
-                                disabled:opacity-50
-                            "
-                        >
-                            {loading
-                                ? "Loading..."
-                                : "Refresh"}
-                        </button>
-
-                    </div>
-
-
-                    {/* ERROR */}
-
-                    {error && (
-                        <div className="
-                            mt-6
-                            rounded-2xl
-                            border
-                            border-red-200
-                            bg-red-50
-                            px-5
-                            py-4
-                            text-sm
-                            text-red-600
-                        ">
-                            {error}
-                        </div>
                     )}
 
 
-                    {/* LOADING */}
+                    {/* STEP 2 */}
 
-                    {loading && (
-                        <div className="
-                            mt-6
-                            rounded-3xl
-                            border
-                            border-neutral-200
-                            bg-white
-                            px-6
-                            py-14
-                            text-center
-                        ">
+                    {step === 2 && (
+
+                        <div>
 
                             <p className="
                                 text-sm
+                                font-medium
                                 text-neutral-500
                             ">
-                                Loading your orders...
+                                Step 2
                             </p>
 
+
+                            <h2 className="
+                                mt-1
+                                text-2xl
+                                font-bold
+                            ">
+                                Drop location
+                            </h2>
+
+
+                            <p className="
+                                mt-2
+                                text-sm
+                                text-neutral-500
+                            ">
+                                Where should we deliver
+                                the package?
+                            </p>
+
+
+                            <div className="
+                                mt-8
+                                space-y-5
+                            ">
+
+                                <Field
+                                    label="Street address"
+                                    value={
+                                        form.dropStreet
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "dropStreet",
+                                                value
+                                            )
+                                    }
+                                    placeholder="Enter drop address"
+                                />
+
+
+                                <Field
+                                    label="Landmark"
+                                    value={
+                                        form.dropLandmark
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "dropLandmark",
+                                                value
+                                            )
+                                    }
+                                    placeholder="Optional"
+                                />
+
+
+                                <Field
+                                    label="Pincode"
+                                    value={
+                                        form.dropPincode
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "dropPincode",
+                                                value
+                                            )
+                                    }
+                                    placeholder="Enter pincode"
+                                    type="number"
+                                />
+
+
+                                <div className="
+                                    grid
+                                    gap-5
+                                    sm:grid-cols-2
+                                ">
+
+                                    <Field
+                                        label="Latitude"
+                                        value={
+                                            form.dropLatitude
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "dropLatitude",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Optional"
+                                    />
+
+
+                                    <Field
+                                        label="Longitude"
+                                        value={
+                                            form.dropLongitude
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "dropLongitude",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Optional"
+                                    />
+
+                                </div>
+
+                            </div>
+
                         </div>
+
                     )}
 
 
-                    {/* EMPTY */}
+                    {/* STEP 3 */}
 
-                    {!loading &&
-                        !error &&
-                        orders.length === 0 && (
+                    {step === 3 && (
 
-                        <div className="
-                            mt-6
-                            rounded-3xl
-                            border
-                            border-dashed
-                            border-neutral-300
-                            bg-white
-                            px-6
-                            py-14
-                            text-center
-                        ">
+                        <div>
 
-                            <div className="
-                                mx-auto
-                                flex
-                                h-12
-                                w-12
-                                items-center
-                                justify-center
-                                rounded-2xl
-                                bg-neutral-100
-                                text-lg
+                            <p className="
+                                text-sm
+                                font-medium
+                                text-neutral-500
+                            ">
+                                Step 3
+                            </p>
+
+
+                            <h2 className="
+                                mt-1
+                                text-2xl
                                 font-bold
                             ">
-                                —
+                                Package details
+                            </h2>
+
+
+                            <p className="
+                                mt-2
+                                text-sm
+                                text-neutral-500
+                            ">
+                                Tell us about the package.
+                            </p>
+
+
+                            <div className="
+                                mt-8
+                                space-y-5
+                            ">
+
+                                <Field
+                                    label="Package name"
+                                    value={
+                                        form.orderName
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "orderName",
+                                                value
+                                            )
+                                    }
+                                    placeholder="e.g. Documents"
+                                />
+
+
+                                <div>
+
+                                    <label className="
+                                        text-sm
+                                        font-medium
+                                        text-neutral-700
+                                    ">
+                                        Package details
+                                    </label>
+
+
+                                    <textarea
+                                        value={
+                                            form.orderDetails
+                                        }
+                                        onChange={
+                                            (event) =>
+                                                updateField(
+                                                    "orderDetails",
+                                                    event.target.value
+                                                )
+                                        }
+                                        placeholder="Describe the package"
+                                        rows="4"
+                                        className="
+                                            mt-2
+                                            w-full
+                                            resize-none
+                                            rounded-xl
+                                            border
+                                            border-neutral-200
+                                            px-4
+                                            py-3
+                                            text-sm
+                                            outline-none
+                                            transition
+                                            focus:border-black
+                                        "
+                                    />
+
+                                </div>
+
+
+                                <Field
+                                    label="Weight (kg)"
+                                    value={
+                                        form.orderWeight
+                                    }
+                                    onChange={
+                                        (value) =>
+                                            updateField(
+                                                "orderWeight",
+                                                value
+                                            )
+                                    }
+                                    placeholder="e.g. 2"
+                                    type="number"
+                                />
+
+
+                                <div className="
+                                    grid
+                                    gap-5
+                                    sm:grid-cols-3
+                                ">
+
+                                    <Field
+                                        label="Length (cm)"
+                                        value={
+                                            form.orderLength
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "orderLength",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Length"
+                                        type="number"
+                                    />
+
+
+                                    <Field
+                                        label="Breadth (cm)"
+                                        value={
+                                            form.orderBreadth
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "orderBreadth",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Breadth"
+                                        type="number"
+                                    />
+
+
+                                    <Field
+                                        label="Height (cm)"
+                                        value={
+                                            form.orderHeight
+                                        }
+                                        onChange={
+                                            (value) =>
+                                                updateField(
+                                                    "orderHeight",
+                                                    value
+                                                )
+                                        }
+                                        placeholder="Height"
+                                        type="number"
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+
+                    {/* STEP 4 */}
+
+                    {step === 4 && (
+
+                        <div>
+
+                            <p className="
+                                text-sm
+                                font-medium
+                                text-neutral-500
+                            ">
+                                Step 4
+                            </p>
+
+
+                            <h2 className="
+                                mt-1
+                                text-2xl
+                                font-bold
+                            ">
+                                Review & payment
+                            </h2>
+
+
+                            <p className="
+                                mt-2
+                                text-sm
+                                text-neutral-500
+                            ">
+                                Review your delivery before
+                                placing the order.
+                            </p>
+
+
+                            <div className="
+                                mt-8
+                                space-y-4
+                            ">
+
+                                <SummaryRow
+                                    label="Package"
+                                    value={
+                                        form.orderName
+                                    }
+                                />
+
+
+                                <SummaryRow
+                                    label="Weight"
+                                    value={`
+                                        ${form.orderWeight} kg
+                                    `}
+                                />
+
+
+                                <SummaryRow
+                                    label="Dimensions"
+                                    value={`
+                                        ${form.orderLength} ×
+                                        ${form.orderBreadth} ×
+                                        ${form.orderHeight} cm
+                                    `}
+                                />
+
+
+                                <SummaryRow
+                                    label="Payment"
+                                    value={
+                                        form.paymentMethod
+                                    }
+                                />
+
                             </div>
 
 
-                            <h3 className="
-                                mt-5
-                                text-base
-                                font-semibold
+                            {/* COUPON */}
+
+                            <div className="
+                                mt-8
                             ">
-                                No orders yet
-                            </h3>
 
-
-                            <p className="
-                                mx-auto
-                                mt-2
-                                max-w-sm
-                                text-sm
-                                leading-6
-                                text-neutral-500
-                            ">
-                                Once you create a delivery,
-                                your recent orders will
-                                appear here.
-                            </p>
-
-
-                            <button
-                                onClick={() =>
-                                    navigate(
-                                        "/place-order"
-                                    )
-                                }
-                                className="
-                                    mt-6
-                                    rounded-xl
-                                    bg-black
-                                    px-5
-                                    py-3
+                                <label className="
                                     text-sm
-                                    font-semibold
-                                    text-white
-                                    transition
-                                    hover:bg-neutral-800
-                                "
-                            >
-                                Create your first order
-                            </button>
-
-                        </div>
-                    )}
+                                    font-medium
+                                    text-neutral-700
+                                ">
+                                    Coupon code
+                                </label>
 
 
-                    {/* ORDERS LIST */}
-
-                    {!loading &&
-                        orders.length > 0 && (
-
-                        <div className="
-                            mt-6
-                            space-y-4
-                        ">
-
-                            {orders.map(
-                                (order) => (
-
-                                <div
-                                    key={order.id}
+                                <input
+                                    value={
+                                        form.couponCode
+                                    }
+                                    onChange={
+                                        (event) =>
+                                            updateField(
+                                                "couponCode",
+                                                event.target.value
+                                            )
+                                    }
+                                    placeholder="Optional"
                                     className="
-                                        rounded-3xl
+                                        mt-2
+                                        w-full
+                                        rounded-xl
                                         border
                                         border-neutral-200
-                                        bg-white
-                                        p-6
-                                        shadow-sm
+                                        px-4
+                                        py-3
+                                        text-sm
+                                        uppercase
+                                        outline-none
+                                        focus:border-black
                                     "
-                                >
+                                />
+
+                            </div>
+
+
+                            {/* PAYMENT METHOD */}
+
+                            <div className="
+                                mt-8
+                            ">
+
+                                <p className="
+                                    text-sm
+                                    font-medium
+                                    text-neutral-700
+                                ">
+                                    Payment method
+                                </p>
+
+
+                                <div className="
+                                    mt-3
+                                    grid
+                                    gap-3
+                                    sm:grid-cols-2
+                                ">
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            updateField(
+                                                "paymentMethod",
+                                                "COD"
+                                            )
+                                        }
+                                        className={`
+                                            rounded-2xl
+                                            border
+                                            p-4
+                                            text-left
+                                            transition
+                                            ${
+                                                form.paymentMethod === "COD"
+                                                    ? "border-black bg-black text-white"
+                                                    : "border-neutral-200 bg-white"
+                                            }
+                                        `}
+                                    >
+
+                                        <p className="
+                                            text-sm
+                                            font-semibold
+                                        ">
+                                            Cash on delivery
+                                        </p>
+
+
+                                        <p className={`
+                                            mt-1
+                                            text-xs
+                                            ${
+                                                form.paymentMethod === "COD"
+                                                    ? "text-neutral-300"
+                                                    : "text-neutral-500"
+                                            }
+                                        `}>
+                                            Pay when the package
+                                            is delivered.
+                                        </p>
+
+                                    </button>
+
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            updateField(
+                                                "paymentMethod",
+                                                "ONLINE"
+                                            )
+                                        }
+                                        className={`
+                                            rounded-2xl
+                                            border
+                                            p-4
+                                            text-left
+                                            transition
+                                            ${
+                                                form.paymentMethod === "ONLINE"
+                                                    ? "border-black bg-black text-white"
+                                                    : "border-neutral-200 bg-white"
+                                            }
+                                        `}
+                                    >
+
+                                        <p className="
+                                            text-sm
+                                            font-semibold
+                                        ">
+                                            Online payment
+                                        </p>
+
+
+                                        <p className={`
+                                            mt-1
+                                            text-xs
+                                            ${
+                                                form.paymentMethod === "ONLINE"
+                                                    ? "text-neutral-300"
+                                                    : "text-neutral-500"
+                                            }
+                                        `}>
+                                            Pay securely online.
+                                        </p>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* PRICE */}
+
+                            {priceData && (
+
+                                <div className="
+                                    mt-8
+                                    rounded-2xl
+                                    bg-neutral-50
+                                    p-5
+                                ">
 
                                     <div className="
                                         flex
-                                        flex-col
-                                        gap-5
-                                        sm:flex-row
-                                        sm:items-center
-                                        sm:justify-between
+                                        justify-between
+                                        text-sm
                                     ">
 
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Order
-                                            </p>
-
-
-                                            <h3 className="
-                                                mt-1
-                                                text-lg
-                                                font-bold
-                                            ">
-                                                {order.orderName}
-                                            </h3>
-
-
-                                            <p className="
-                                                mt-1
-                                                break-all
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                #{order.id}
-                                            </p>
-
-                                        </div>
-
-
-                                        <div className="
-                                            flex
-                                            items-center
-                                            gap-3
+                                        <span className="
+                                            text-neutral-500
                                         ">
-
-                                            <span className={`
-                                                rounded-full
-                                                border
-                                                px-3
-                                                py-1.5
-                                                text-xs
-                                                font-semibold
-                                                ${getStatusStyle(
-                                                    order.status
-                                                )}
-                                            `}>
-                                                {order.status}
-                                            </span>
+                                            Original amount
+                                        </span>
 
 
-                                            <span className="
-                                                text-lg
-                                                font-bold
-                                            ">
-                                                ₹
-                                                {Number(
-                                                    order.finalAmount
-                                                ).toFixed(2)}
-                                            </span>
-
-                                        </div>
+                                        <span className="
+                                            font-medium
+                                        ">
+                                            ₹
+                                            {Number(
+                                                priceData.originalAmount ??
+                                                priceData.price ??
+                                                0
+                                            ).toFixed(2)}
+                                        </span>
 
                                     </div>
 
 
                                     <div className="
-                                        mt-5
-                                        grid
-                                        gap-4
-                                        border-t
-                                        border-neutral-100
-                                        pt-5
-                                        sm:grid-cols-3
+                                        mt-3
+                                        flex
+                                        justify-between
+                                        text-sm
                                     ">
 
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Payment
-                                            </p>
+                                        <span className="
+                                            text-neutral-500
+                                        ">
+                                            Discount
+                                        </span>
 
 
-                                            <p className="
-                                                mt-1
-                                                text-sm
-                                                font-medium
-                                            ">
-                                                {order.paymentMethod}
-                                            </p>
+                                        <span className="
+                                            font-medium
+                                        ">
+                                            - ₹
+                                            {Number(
+                                                priceData.discountAmount ??
+                                                0
+                                            ).toFixed(2)}
+                                        </span>
 
-                                        </div>
-
-
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Payment status
-                                            </p>
+                                    </div>
 
 
-                                            <p className="
-                                                mt-1
-                                                text-sm
-                                                font-medium
-                                            ">
-                                                {order.paymentStatus}
-                                            </p>
+                                    <div className="
+                                        mt-4
+                                        flex
+                                        justify-between
+                                        border-t
+                                        border-neutral-200
+                                        pt-4
+                                    ">
 
-                                        </div>
-
-
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Ordered
-                                            </p>
+                                        <span className="
+                                            font-semibold
+                                        ">
+                                            Total
+                                        </span>
 
 
-                                            <p className="
-                                                mt-1
-                                                text-sm
-                                                font-medium
-                                            ">
-                                                {formatDate(
-                                                    order.createdAt
-                                                )}
-                                            </p>
-
-                                        </div>
+                                        <span className="
+                                            text-xl
+                                            font-bold
+                                        ">
+                                            ₹
+                                            {Number(
+                                                priceData.finalAmount ??
+                                                priceData.price ??
+                                                0
+                                            ).toFixed(2)}
+                                        </span>
 
                                     </div>
 
                                 </div>
 
-                            ))}
+                            )}
 
                         </div>
+
                     )}
 
-                </section>
+
+                    {/* ACTIONS */}
+
+                    <div className="
+                        mt-10
+                        flex
+                        gap-3
+                    ">
+
+                        {step > 1 && (
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setError("");
+                                    setStep(
+                                        (previous) =>
+                                            previous - 1
+                                    );
+                                }}
+                                className="
+                                    rounded-xl
+                                    border
+                                    border-neutral-200
+                                    bg-white
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    text-black
+                                    transition
+                                    hover:bg-neutral-50
+                                "
+                            >
+                                Back
+                            </button>
+
+                        )}
+
+
+                        <button
+                            type="button"
+                            onClick={
+                                step === 4
+                                    ? handlePlaceOrder
+                                    : goNext
+                            }
+                            disabled={
+                                loading ||
+                                previewLoading
+                            }
+                            className="
+                                flex-1
+                                rounded-xl
+                                bg-black
+                                px-5
+                                py-3
+                                text-sm
+                                font-semibold
+                                text-white
+                                transition
+                                hover:bg-neutral-800
+                                disabled:cursor-not-allowed
+                                disabled:opacity-50
+                            "
+                        >
+
+                            {loading
+                                ? "Placing order..."
+                                : previewLoading
+                                    ? "Calculating price..."
+                                    : step === 4
+                                        ? "Place order"
+                                        : "Continue"
+                            }
+
+                        </button>
+
+                    </div>
+
+                </div>
 
             </main>
 
         </div>
+    );
+}
+
+
+/* FIELD */
+
+function Field({
+    label,
+    value,
+    onChange,
+    placeholder,
+    type = "text"
+}) {
+
+    return (
+
+        <div>
+
+            <label className="
+                text-sm
+                font-medium
+                text-neutral-700
+            ">
+                {label}
+            </label>
+
+
+            <input
+                type={type}
+                value={value}
+                onChange={
+                    (event) =>
+                        onChange(
+                            event.target.value
+                        )
+                }
+                placeholder={placeholder}
+                className="
+                    mt-2
+                    w-full
+                    rounded-xl
+                    border
+                    border-neutral-200
+                    px-4
+                    py-3
+                    text-sm
+                    outline-none
+                    transition
+                    focus:border-black
+                "
+            />
+
+        </div>
+
+    );
+}
+
+
+/* SUMMARY ROW */
+
+function SummaryRow({
+    label,
+    value
+}) {
+
+    return (
+
+        <div className="
+            flex
+            items-center
+            justify-between
+            gap-5
+            rounded-xl
+            bg-neutral-50
+            px-4
+            py-3
+        ">
+
+            <span className="
+                text-sm
+                text-neutral-500
+            ">
+                {label}
+            </span>
+
+
+            <span className="
+                text-right
+                text-sm
+                font-semibold
+            ">
+                {value}
+            </span>
+
+        </div>
+
     );
 }

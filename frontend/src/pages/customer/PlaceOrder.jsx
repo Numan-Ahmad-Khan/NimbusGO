@@ -1,320 +1,229 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { logout } from "../../services/auth";
-import {
-    previewOrder,
-    placeOrder
-} from "../../services/order";
-
-import { LogoOnly } from "../../components/Logo";
-
+import LocationPicker from "../../components/LocationPicker";
+import { LogoWithName } from "../../components/Logo";
+import { placeOrder } from "../../services/order";
 
 export default function PlaceOrder() {
-
     const navigate = useNavigate();
 
+    const [step, setStep] = useState(1);
 
-    const [step, setStep] =
-        useState(1);
+    const [pickup, setPickup] = useState({
+        latitude: null,
+        longitude: null,
+        street: "",
+        landmark: "",
+        pincode: ""
+    });
 
-    const [loading, setLoading] =
-        useState(false);
+    const [drop, setDrop] = useState({
+        latitude: null,
+        longitude: null,
+        street: "",
+        landmark: "",
+        pincode: ""
+    });
 
-    const [previewLoading, setPreviewLoading] =
-        useState(false);
-
-    const [error, setError] =
-        useState("");
-
-
-    const [form, setForm] = useState({
-
+    const [order, setOrder] = useState({
         orderName: "",
         orderDetails: "",
-
         orderWeight: "",
         orderLength: "",
         orderBreadth: "",
         orderHeight: "",
-
-        pickupStreet: "",
-        pickupLandmark: "",
-        pickupPincode: "",
-        pickupLatitude: "",
-        pickupLongitude: "",
-
-        dropStreet: "",
-        dropLandmark: "",
-        dropPincode: "",
-        dropLatitude: "",
-        dropLongitude: "",
-
-        paymentMethod: "COD",
-
         couponCode: ""
-
     });
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const [priceData, setPriceData] =
-        useState(null);
-
-
-    function updateField(
-        field,
-        value
-    ) {
-
-        setForm(
-            (previous) => ({
-                ...previous,
-                [field]: value
-            })
-        );
-
-        setError("");
+    function handleLocationSelect(location) {
+        setPickup((previous) => ({
+            ...previous,
+            latitude: location.latitude,
+            longitude: location.longitude
+        }));
     }
 
-
-    function handleLogout() {
-
-        logout();
-
-        navigate(
-            "/",
-            {
-                replace: true
-            }
-        );
+    function handleDropLocationSelect(location) {
+        setDrop((previous) => ({
+            ...previous,
+            latitude: location.latitude,
+            longitude: location.longitude
+        }));
     }
 
-
-    function validateStep() {
-
-        setError("");
-
-
-        if (step === 1) {
-
-            if (
-                !form.pickupStreet ||
-                !form.pickupPincode
-            ) {
-                setError(
-                    "Please enter the pickup address and pincode."
-                );
-
-                return false;
-            }
-
-            return true;
+    function validatePickup() {
+        if (
+            pickup.latitude === null ||
+            pickup.longitude === null
+        ) {
+            setError("Please select a pickup location on the map.");
+            return false;
         }
 
-
-        if (step === 2) {
-
-            if (
-                !form.dropStreet ||
-                !form.dropPincode
-            ) {
-                setError(
-                    "Please enter the drop address and pincode."
-                );
-
-                return false;
-            }
-
-            return true;
+        if (!pickup.street.trim()) {
+            setError("Please enter the pickup street address.");
+            return false;
         }
 
-
-        if (step === 3) {
-
-            if (!form.orderName) {
-
-                setError(
-                    "Please enter a package name."
-                );
-
-                return false;
-            }
-
-
-            if (!form.orderWeight) {
-
-                setError(
-                    "Please enter the package weight."
-                );
-
-                return false;
-            }
-
-
-            if (
-                !form.orderLength ||
-                !form.orderBreadth ||
-                !form.orderHeight
-            ) {
-
-                setError(
-                    "Please enter the package dimensions."
-                );
-
-                return false;
-            }
-
-            return true;
+        if (!pickup.pincode.trim()) {
+            setError("Please enter the pickup pincode.");
+            return false;
         }
-
 
         return true;
     }
 
+    function validateDrop() {
+        if (
+            drop.latitude === null ||
+            drop.longitude === null
+        ) {
+            setError("Please select a drop location on the map.");
+            return false;
+        }
 
-    function buildOrderData() {
+        if (!drop.street.trim()) {
+            setError("Please enter the drop street address.");
+            return false;
+        }
 
-        return {
+        if (!drop.pincode.trim()) {
+            setError("Please enter the drop pincode.");
+            return false;
+        }
 
-            orderName:
-                form.orderName,
-
-            orderDetails:
-                form.orderDetails,
-
-            orderWeight:
-                Number(form.orderWeight),
-
-            orderLength:
-                Number(form.orderLength),
-
-            orderBreadth:
-                Number(form.orderBreadth),
-
-            orderHeight:
-                Number(form.orderHeight),
-
-
-            pickup: {
-
-                street:
-                    form.pickupStreet,
-
-                landmark:
-                    form.pickupLandmark,
-
-                pincode:
-                    form.pickupPincode,
-
-                latitude:
-                    form.pickupLatitude
-                        ? Number(form.pickupLatitude)
-                        : null,
-
-                longitude:
-                    form.pickupLongitude
-                        ? Number(form.pickupLongitude)
-                        : null
-            },
-
-
-            drop: {
-
-                street:
-                    form.dropStreet,
-
-                landmark:
-                    form.dropLandmark,
-
-                pincode:
-                    form.dropPincode,
-
-                latitude:
-                    form.dropLatitude
-                        ? Number(form.dropLatitude)
-                        : null,
-
-                longitude:
-                    form.dropLongitude
-                        ? Number(form.dropLongitude)
-                        : null
-            },
-
-
-            paymentMethod:
-                form.paymentMethod,
-
-
-            ...(form.couponCode
-                ? {
-                    couponCode:
-                        form.couponCode
-                }
-                : {})
-        };
+        return true;
     }
 
+    function validatePackage() {
+        if (!order.orderName.trim()) {
+            setError("Please enter what you are sending.");
+            return false;
+        }
 
-    async function handlePreview() {
+        if (!order.orderDetails.trim()) {
+            setError("Please describe your package.");
+            return false;
+        }
 
-        if (!validateStep()) {
+        if (
+            !order.orderWeight ||
+            Number(order.orderWeight) <= 0
+        ) {
+            setError("Please enter a valid package weight.");
+            return false;
+        }
+
+        if (
+            !order.orderLength ||
+            Number(order.orderLength) <= 0
+        ) {
+            setError("Please enter a valid package length.");
+            return false;
+        }
+
+        if (
+            !order.orderBreadth ||
+            Number(order.orderBreadth) <= 0
+        ) {
+            setError("Please enter a valid package breadth.");
+            return false;
+        }
+
+        if (
+            !order.orderHeight ||
+            Number(order.orderHeight) <= 0
+        ) {
+            setError("Please enter a valid package height.");
+            return false;
+        }
+
+        return true;
+    }
+
+    function handleNext() {
+        setError("");
+
+        if (step === 1) {
+            if (!validatePickup()) {
+                return;
+            }
+
+            setStep(2);
             return;
         }
 
+        if (step === 2) {
+            if (!validateDrop()) {
+                return;
+            }
 
-        setPreviewLoading(true);
-        setError("");
-
-
-        try {
-
-            const data =
-                await previewOrder(
-                    buildOrderData()
-                );
-
-
-            setPriceData(data);
-
-            setStep(4);
-
-        } catch (error) {
-
-            console.log(
-                "Preview order failed:",
-                error
-            );
-
-            setError(
-                error.message
-            );
-
-        } finally {
-
-            setPreviewLoading(false);
+            setStep(3);
         }
     }
 
-
-    async function handlePlaceOrder() {
-
-        setLoading(true);
+    function handleBack() {
         setError("");
 
+        if (step > 1) {
+            setStep((previous) => previous - 1);
+        }
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        setError("");
+
+        if (!validatePackage()) {
+            return;
+        }
+
+        setLoading(true);
 
         try {
+            const orderData = {
+                orderName: order.orderName.trim(),
+                orderDetails: order.orderDetails.trim(),
 
-            const data =
-                await placeOrder(
-                    buildOrderData()
-                );
+                orderWeight: Number(order.orderWeight),
+                orderLength: Number(order.orderLength),
+                orderBreadth: Number(order.orderBreadth),
+                orderHeight: Number(order.orderHeight),
 
+                pickup: {
+                    latitude: pickup.latitude,
+                    longitude: pickup.longitude,
+                    street: pickup.street.trim(),
+                    landmark: pickup.landmark.trim(),
+                    pincode: pickup.pincode.trim(),
+                    addresstype: "PICKUP"
+                },
 
-            sessionStorage.setItem(
-                "nimbusgo_order_success",
-                JSON.stringify(data)
+                drop: {
+                    latitude: drop.latitude,
+                    longitude: drop.longitude,
+                    street: drop.street.trim(),
+                    landmark: drop.landmark.trim(),
+                    pincode: drop.pincode.trim(),
+                    addresstype: "DROP"
+                }
+            };
+
+            if (order.couponCode.trim()) {
+                orderData.couponCode =
+                    order.couponCode.trim();
+            }
+
+            const data = await placeOrder(orderData);
+
+            console.log(
+                "Order created successfully:",
+                data
             );
-
 
             navigate(
                 "/order-success",
@@ -327,1111 +236,669 @@ export default function PlaceOrder() {
             );
 
         } catch (error) {
-
-            console.log(
-                "Place order failed:",
-                error
-            );
-
-            setError(
-                error.message
-            );
-
+            setError(error.message);
         } finally {
-
             setLoading(false);
         }
     }
 
-
-    function goNext() {
-
-        if (!validateStep()) {
-            return;
-        }
-
-
-        if (step === 3) {
-
-            handlePreview();
-
-            return;
-        }
-
-
-        setStep(
-            (previous) =>
-                previous + 1
-        );
-    }
-
-
-    function goBack() {
-
-        setError("");
-
-
-        if (step === 1) {
-
-            navigate(
-                "/customer/dashboard"
-            );
-
-            return;
-        }
-
-
-        setStep(
-            (previous) =>
-                previous - 1
-        );
-    }
-
-
     return (
-        <div className="
-            min-h-screen
-            bg-[#fafafa]
-        ">
+        <div className="min-h-screen bg-[#fafafa] px-4 py-8 sm:px-6">
 
+            {/* Header */}
+            <header className="mx-auto max-w-5xl">
 
-            {/* NAVBAR */}
+                <LogoWithName />
 
-            <nav className="
-                border-b
-                border-neutral-200
-                bg-white
-            ">
+                <div className="mt-10">
 
-                <div className="
-                    mx-auto
-                    flex
-                    max-w-5xl
-                    items-center
-                    justify-between
-                    px-6
-                    py-5
-                ">
-
-                    <LogoOnly />
-
-
-                    <button
-                        onClick={handleLogout}
-                        className="
-                            rounded-xl
-                            border
-                            border-neutral-200
-                            bg-white
-                            px-4
-                            py-2
-                            text-sm
-                            font-medium
-                            text-black
-                            transition
-                            hover:bg-neutral-50
-                        "
-                    >
-                        Logout
-                    </button>
-
-                </div>
-
-            </nav>
-
-
-            {/* MAIN */}
-
-            <main className="
-                mx-auto
-                max-w-3xl
-                px-6
-                pb-20
-                pt-10
-            ">
-
-
-                {/* HEADER */}
-
-                <div>
-
-                    <button
-                        onClick={goBack}
-                        className="
-                            text-sm
-                            font-medium
-                            text-neutral-500
-                            hover:text-black
-                        "
-                    >
-                        ← Back
-                    </button>
-
-
-                    <p className="
-                        mt-8
-                        text-sm
-                        font-medium
-                        text-neutral-500
-                    ">
-                        New delivery
+                    <p className="text-sm font-medium text-neutral-500">
+                        Create a delivery
                     </p>
 
-
-                    <h1 className="
-                        mt-2
-                        text-4xl
-                        font-bold
-                        tracking-tight
-                        text-black
-                    ">
-                        Send a package
+                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-black sm:text-4xl">
+                        Send your package
                     </h1>
 
-
-                    <p className="
-                        mt-3
-                        text-sm
-                        leading-6
-                        text-neutral-500
-                    ">
-                        Enter your delivery details
-                        and we'll calculate the price.
+                    <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-500">
+                        Enter your pickup, drop and package details to
+                        create your delivery.
                     </p>
 
                 </div>
 
+            </header>
 
-                {/* STEPS */}
 
-                <div className="
-                    mt-8
-                    flex
-                    items-center
-                    gap-2
-                ">
+            {/* Progress */}
+            <div className="mx-auto mt-8 max-w-5xl">
 
-                    {[1, 2, 3, 4].map(
-                        (number) => (
+                <div className="flex items-center">
 
-                        <div
-                            key={number}
-                            className={`
-                                h-1.5
-                                flex-1
-                                rounded-full
-                                ${
-                                    number <= step
-                                        ? "bg-black"
-                                        : "bg-neutral-200"
-                                }
-                            `}
-                        />
+                    <div
+                        className={`flex items-center gap-2 text-sm font-medium ${
+                            step >= 1
+                                ? "text-black"
+                                : "text-neutral-400"
+                        }`}
+                    >
 
-                    ))}
+                        <span
+                            className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                                step >= 1
+                                    ? "bg-black text-white"
+                                    : "bg-neutral-200 text-neutral-500"
+                            }`}
+                        >
+                            1
+                        </span>
+
+                        <span className="hidden sm:block">
+                            Pickup
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        className={`mx-3 h-px flex-1 ${
+                            step >= 2
+                                ? "bg-black"
+                                : "bg-neutral-200"
+                        }`}
+                    />
+
+
+                    <div
+                        className={`flex items-center gap-2 text-sm font-medium ${
+                            step >= 2
+                                ? "text-black"
+                                : "text-neutral-400"
+                        }`}
+                    >
+
+                        <span
+                            className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                                step >= 2
+                                    ? "bg-black text-white"
+                                    : "bg-neutral-200 text-neutral-500"
+                            }`}
+                        >
+                            2
+                        </span>
+
+                        <span className="hidden sm:block">
+                            Drop
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        className={`mx-3 h-px flex-1 ${
+                            step >= 3
+                                ? "bg-black"
+                                : "bg-neutral-200"
+                        }`}
+                    />
+
+
+                    <div
+                        className={`flex items-center gap-2 text-sm font-medium ${
+                            step >= 3
+                                ? "text-black"
+                                : "text-neutral-400"
+                        }`}
+                    >
+
+                        <span
+                            className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                                step >= 3
+                                    ? "bg-black text-white"
+                                    : "bg-neutral-200 text-neutral-500"
+                            }`}
+                        >
+                            3
+                        </span>
+
+                        <span className="hidden sm:block">
+                            Package
+                        </span>
+
+                    </div>
 
                 </div>
 
-
-                {/* ERROR */}
-
-                {error && (
-
-                    <div className="
-                        mt-6
-                        rounded-2xl
-                        border
-                        border-red-200
-                        bg-red-50
-                        px-5
-                        py-4
-                        text-sm
-                        text-red-600
-                    ">
-                        {error}
-                    </div>
-
-                )}
+            </div>
 
 
-                {/* FORM CARD */}
+            {/* Main card */}
+            <main className="mx-auto mt-6 max-w-5xl">
 
-                <div className="
-                    mt-8
-                    rounded-3xl
-                    border
-                    border-neutral-200
-                    bg-white
-                    p-6
-                    shadow-sm
-                    sm:p-8
-                ">
+                <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-8">
 
 
-                    {/* STEP 1 */}
-
+                    {/* STEP 1 — PICKUP */}
                     {step === 1 && (
+                        <>
 
-                        <div>
+                            <div className="mb-8">
 
-                            <p className="
-                                text-sm
-                                font-medium
-                                text-neutral-500
-                            ">
-                                Step 1
-                            </p>
+                                <p className="text-sm font-medium text-neutral-500">
+                                    Step 1
+                                </p>
 
+                                <h2 className="mt-1 text-2xl font-bold tracking-tight text-black">
+                                    Pickup Address
+                                </h2>
 
-                            <h2 className="
-                                mt-1
-                                text-2xl
-                                font-bold
-                            ">
-                                Pickup location
-                            </h2>
+                                <p className="mt-2 text-sm text-neutral-500">
+                                    Where should we collect your package?
+                                </p>
+
+                            </div>
 
 
-                            <p className="
-                                mt-2
-                                text-sm
-                                text-neutral-500
-                            ">
-                                Where should we collect
-                                the package?
-                            </p>
+                            <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+
+                                {/* Form */}
+                                <div className="space-y-5">
+
+                                    <div>
+
+                                        <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                            Street address
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            placeholder="Enter street address"
+                                            value={pickup.street}
+                                            onChange={(event) =>
+                                                setPickup((previous) => ({
+                                                    ...previous,
+                                                    street: event.target.value
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                        />
+
+                                    </div>
 
 
-                            <div className="
-                                mt-8
-                                space-y-5
-                            ">
+                                    <div>
 
-                                <Field
-                                    label="Street address"
-                                    value={
-                                        form.pickupStreet
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "pickupStreet",
-                                                value
-                                            )
-                                    }
-                                    placeholder="Enter pickup address"
-                                />
+                                        <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                            Landmark
+                                        </label>
 
+                                        <input
+                                            type="text"
+                                            placeholder="Nearby landmark (optional)"
+                                            value={pickup.landmark}
+                                            onChange={(event) =>
+                                                setPickup((previous) => ({
+                                                    ...previous,
+                                                    landmark: event.target.value
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                        />
 
-                                <Field
-                                    label="Landmark"
-                                    value={
-                                        form.pickupLandmark
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "pickupLandmark",
-                                                value
-                                            )
-                                    }
-                                    placeholder="Optional"
-                                />
+                                    </div>
 
 
-                                <Field
-                                    label="Pincode"
-                                    value={
-                                        form.pickupPincode
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "pickupPincode",
-                                                value
-                                            )
-                                    }
-                                    placeholder="Enter pincode"
-                                    type="number"
-                                />
+                                    <div>
+
+                                        <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                            Pincode
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            placeholder="Enter pincode"
+                                            value={pickup.pincode}
+                                            onChange={(event) =>
+                                                setPickup((previous) => ({
+                                                    ...previous,
+                                                    pincode: event.target.value
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                        />
+
+                                    </div>
+
+                                </div>
 
 
-                                <div className="
-                                    grid
-                                    gap-5
-                                    sm:grid-cols-2
-                                ">
+                                {/* Pickup Map */}
+                                <div>
 
-                                    <Field
-                                        label="Latitude"
-                                        value={
-                                            form.pickupLatitude
+                                    <p className="mb-2 text-sm font-medium text-neutral-700">
+                                        Select pickup location
+                                    </p>
+
+                                    <LocationPicker
+                                        onLocationSelect={
+                                            handleLocationSelect
                                         }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "pickupLatitude",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Optional"
                                     />
 
+                                    {pickup.latitude !== null &&
+                                        pickup.longitude !== null && (
 
-                                    <Field
-                                        label="Longitude"
-                                        value={
-                                            form.pickupLongitude
-                                        }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "pickupLongitude",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Optional"
-                                    />
+                                            <div className="mt-3 rounded-xl bg-neutral-50 px-4 py-3">
+
+                                                <p className="text-xs font-medium text-neutral-700">
+                                                    Location selected
+                                                </p>
+
+                                                <p className="mt-1 text-xs text-neutral-500">
+                                                    {pickup.latitude.toFixed(6)},{" "}
+                                                    {pickup.longitude.toFixed(6)}
+                                                </p>
+
+                                            </div>
+
+                                        )}
 
                                 </div>
 
                             </div>
 
-                        </div>
-
+                        </>
                     )}
 
 
-                    {/* STEP 2 */}
-
+                    {/* STEP 2 — DROP */}
                     {step === 2 && (
+                        <>
 
-                        <div>
+                            <div className="mb-8">
 
-                            <p className="
-                                text-sm
-                                font-medium
-                                text-neutral-500
-                            ">
-                                Step 2
-                            </p>
+                                <p className="text-sm font-medium text-neutral-500">
+                                    Step 2
+                                </p>
 
+                                <h2 className="mt-1 text-2xl font-bold tracking-tight text-black">
+                                    Drop Address
+                                </h2>
 
-                            <h2 className="
-                                mt-1
-                                text-2xl
-                                font-bold
-                            ">
-                                Drop location
-                            </h2>
+                                <p className="mt-2 text-sm text-neutral-500">
+                                    Where should we deliver your package?
+                                </p>
+
+                            </div>
 
 
-                            <p className="
-                                mt-2
-                                text-sm
-                                text-neutral-500
-                            ">
-                                Where should we deliver
-                                the package?
-                            </p>
+                            <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+
+                                {/* Form */}
+                                <div className="space-y-5">
+
+                                    <div>
+
+                                        <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                            Street address
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            placeholder="Enter street address"
+                                            value={drop.street}
+                                            onChange={(event) =>
+                                                setDrop((previous) => ({
+                                                    ...previous,
+                                                    street: event.target.value
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                        />
+
+                                    </div>
 
 
-                            <div className="
-                                mt-8
-                                space-y-5
-                            ">
+                                    <div>
 
-                                <Field
-                                    label="Street address"
-                                    value={
-                                        form.dropStreet
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "dropStreet",
-                                                value
-                                            )
-                                    }
-                                    placeholder="Enter drop address"
-                                />
+                                        <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                            Landmark
+                                        </label>
 
+                                        <input
+                                            type="text"
+                                            placeholder="Nearby landmark (optional)"
+                                            value={drop.landmark}
+                                            onChange={(event) =>
+                                                setDrop((previous) => ({
+                                                    ...previous,
+                                                    landmark: event.target.value
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                        />
 
-                                <Field
-                                    label="Landmark"
-                                    value={
-                                        form.dropLandmark
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "dropLandmark",
-                                                value
-                                            )
-                                    }
-                                    placeholder="Optional"
-                                />
+                                    </div>
 
 
-                                <Field
-                                    label="Pincode"
-                                    value={
-                                        form.dropPincode
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "dropPincode",
-                                                value
-                                            )
-                                    }
-                                    placeholder="Enter pincode"
-                                    type="number"
-                                />
+                                    <div>
+
+                                        <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                            Pincode
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            placeholder="Enter pincode"
+                                            value={drop.pincode}
+                                            onChange={(event) =>
+                                                setDrop((previous) => ({
+                                                    ...previous,
+                                                    pincode: event.target.value
+                                                }))
+                                            }
+                                            className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                        />
+
+                                    </div>
+
+                                </div>
 
 
-                                <div className="
-                                    grid
-                                    gap-5
-                                    sm:grid-cols-2
-                                ">
+                                {/* Drop Map */}
+                                <div>
 
-                                    <Field
-                                        label="Latitude"
-                                        value={
-                                            form.dropLatitude
+                                    <p className="mb-2 text-sm font-medium text-neutral-700">
+                                        Select drop location
+                                    </p>
+
+                                    <LocationPicker
+                                        onLocationSelect={
+                                            handleDropLocationSelect
                                         }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "dropLatitude",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Optional"
                                     />
 
+                                    {drop.latitude !== null &&
+                                        drop.longitude !== null && (
 
-                                    <Field
-                                        label="Longitude"
-                                        value={
-                                            form.dropLongitude
-                                        }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "dropLongitude",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Optional"
-                                    />
+                                            <div className="mt-3 rounded-xl bg-neutral-50 px-4 py-3">
+
+                                                <p className="text-xs font-medium text-neutral-700">
+                                                    Location selected
+                                                </p>
+
+                                                <p className="mt-1 text-xs text-neutral-500">
+                                                    {drop.latitude.toFixed(6)},{" "}
+                                                    {drop.longitude.toFixed(6)}
+                                                </p>
+
+                                            </div>
+
+                                        )}
 
                                 </div>
 
                             </div>
 
-                        </div>
-
+                        </>
                     )}
 
 
-                    {/* STEP 3 */}
-
+                    {/* STEP 3 — PACKAGE */}
                     {step === 3 && (
+                        <>
 
-                        <div>
+                            <div className="mb-8">
 
-                            <p className="
-                                text-sm
-                                font-medium
-                                text-neutral-500
-                            ">
-                                Step 3
-                            </p>
+                                <p className="text-sm font-medium text-neutral-500">
+                                    Step 3
+                                </p>
 
+                                <h2 className="mt-1 text-2xl font-bold tracking-tight text-black">
+                                    Package Details
+                                </h2>
 
-                            <h2 className="
-                                mt-1
-                                text-2xl
-                                font-bold
-                            ">
-                                Package details
-                            </h2>
+                                <p className="mt-2 text-sm text-neutral-500">
+                                    Tell us a little about what you're sending.
+                                </p>
+
+                            </div>
 
 
-                            <p className="
-                                mt-2
-                                text-sm
-                                text-neutral-500
-                            ">
-                                Tell us about the package.
-                            </p>
+                            <div className="mx-auto max-w-3xl space-y-5">
 
+                                <div>
 
-                            <div className="
-                                mt-8
-                                space-y-5
-                            ">
+                                    <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                        What are you sending?
+                                    </label>
 
-                                <Field
-                                    label="Package name"
-                                    value={
-                                        form.orderName
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "orderName",
-                                                value
-                                            )
-                                    }
-                                    placeholder="e.g. Documents"
-                                />
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Laptop, documents, clothes"
+                                        value={order.orderName}
+                                        onChange={(event) =>
+                                            setOrder((previous) => ({
+                                                ...previous,
+                                                orderName: event.target.value
+                                            }))
+                                        }
+                                        className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                    />
+
+                                </div>
 
 
                                 <div>
 
-                                    <label className="
-                                        text-sm
-                                        font-medium
-                                        text-neutral-700
-                                    ">
-                                        Package details
+                                    <label className="mb-2 block text-sm font-medium text-neutral-700">
+                                        Package description
                                     </label>
 
-
                                     <textarea
-                                        value={
-                                            form.orderDetails
+                                        placeholder="Describe your package"
+                                        value={order.orderDetails}
+                                        onChange={(event) =>
+                                            setOrder((previous) => ({
+                                                ...previous,
+                                                orderDetails: event.target.value
+                                            }))
                                         }
-                                        onChange={
-                                            (event) =>
-                                                updateField(
-                                                    "orderDetails",
-                                                    event.target.value
-                                                )
-                                        }
-                                        placeholder="Describe the package"
-                                        rows="4"
-                                        className="
-                                            mt-2
-                                            w-full
-                                            resize-none
-                                            rounded-xl
-                                            border
-                                            border-neutral-200
-                                            px-4
-                                            py-3
-                                            text-sm
-                                            outline-none
-                                            transition
-                                            focus:border-black
-                                        "
+                                        rows={4}
+                                        className="w-full resize-none rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
                                     />
 
                                 </div>
 
 
-                                <Field
-                                    label="Weight (kg)"
-                                    value={
-                                        form.orderWeight
-                                    }
-                                    onChange={
-                                        (value) =>
-                                            updateField(
-                                                "orderWeight",
-                                                value
-                                            )
-                                    }
-                                    placeholder="e.g. 2"
-                                    type="number"
-                                />
+                                {/* Dimensions */}
+                                <div>
+
+                                    <label className="mb-3 block text-sm font-medium text-neutral-700">
+                                        Package dimensions
+                                    </label>
+
+                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+
+                                        <div>
+
+                                            <input
+                                                type="number"
+                                                placeholder="Weight"
+                                                value={order.orderWeight}
+                                                onChange={(event) =>
+                                                    setOrder((previous) => ({
+                                                        ...previous,
+                                                        orderWeight: event.target.value
+                                                    }))
+                                                }
+                                                min="0"
+                                                step="0.1"
+                                                className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                            />
+
+                                            <p className="mt-1 text-xs text-neutral-400">
+                                                kg
+                                            </p>
+
+                                        </div>
 
 
-                                <div className="
-                                    grid
-                                    gap-5
-                                    sm:grid-cols-3
-                                ">
+                                        <div>
 
-                                    <Field
-                                        label="Length (cm)"
-                                        value={
-                                            form.orderLength
+                                            <input
+                                                type="number"
+                                                placeholder="Length"
+                                                value={order.orderLength}
+                                                onChange={(event) =>
+                                                    setOrder((previous) => ({
+                                                        ...previous,
+                                                        orderLength: event.target.value
+                                                    }))
+                                                }
+                                                min="0"
+                                                step="0.1"
+                                                className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                            />
+
+                                            <p className="mt-1 text-xs text-neutral-400">
+                                                cm
+                                            </p>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <input
+                                                type="number"
+                                                placeholder="Breadth"
+                                                value={order.orderBreadth}
+                                                onChange={(event) =>
+                                                    setOrder((previous) => ({
+                                                        ...previous,
+                                                        orderBreadth: event.target.value
+                                                    }))
+                                                }
+                                                min="0"
+                                                step="0.1"
+                                                className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                            />
+
+                                            <p className="mt-1 text-xs text-neutral-400">
+                                                cm
+                                            </p>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <input
+                                                type="number"
+                                                placeholder="Height"
+                                                value={order.orderHeight}
+                                                onChange={(event) =>
+                                                    setOrder((previous) => ({
+                                                        ...previous,
+                                                        orderHeight: event.target.value
+                                                    }))
+                                                }
+                                                min="0"
+                                                step="0.1"
+                                                className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+                                            />
+
+                                            <p className="mt-1 text-xs text-neutral-400">
+                                                cm
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* Coupon */}
+                                <div>
+
+                                    <label className="mb-2 block text-sm font-medium text-neutral-700">
+
+                                        Coupon
+
+                                        <span className="ml-1 font-normal text-neutral-400">
+                                            (optional)
+                                        </span>
+
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        placeholder="Enter coupon code"
+                                        value={order.couponCode}
+                                        onChange={(event) =>
+                                            setOrder((previous) => ({
+                                                ...previous,
+                                                couponCode: event.target.value
+                                            }))
                                         }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "orderLength",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Length"
-                                        type="number"
-                                    />
-
-
-                                    <Field
-                                        label="Breadth (cm)"
-                                        value={
-                                            form.orderBreadth
-                                        }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "orderBreadth",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Breadth"
-                                        type="number"
-                                    />
-
-
-                                    <Field
-                                        label="Height (cm)"
-                                        value={
-                                            form.orderHeight
-                                        }
-                                        onChange={
-                                            (value) =>
-                                                updateField(
-                                                    "orderHeight",
-                                                    value
-                                                )
-                                        }
-                                        placeholder="Height"
-                                        type="number"
+                                        className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
                                     />
 
                                 </div>
 
                             </div>
 
-                        </div>
-
+                        </>
                     )}
 
 
-                    {/* STEP 4 */}
-
-                    {step === 4 && (
-
-                        <div>
-
-                            <p className="
-                                text-sm
-                                font-medium
-                                text-neutral-500
-                            ">
-                                Step 4
-                            </p>
-
-
-                            <h2 className="
-                                mt-1
-                                text-2xl
-                                font-bold
-                            ">
-                                Review & payment
-                            </h2>
-
-
-                            <p className="
-                                mt-2
-                                text-sm
-                                text-neutral-500
-                            ">
-                                Review your delivery before
-                                placing the order.
-                            </p>
-
-
-                            <div className="
-                                mt-8
-                                space-y-4
-                            ">
-
-                                <SummaryRow
-                                    label="Package"
-                                    value={
-                                        form.orderName
-                                    }
-                                />
-
-
-                                <SummaryRow
-                                    label="Weight"
-                                    value={`
-                                        ${form.orderWeight} kg
-                                    `}
-                                />
-
-
-                                <SummaryRow
-                                    label="Dimensions"
-                                    value={`
-                                        ${form.orderLength} ×
-                                        ${form.orderBreadth} ×
-                                        ${form.orderHeight} cm
-                                    `}
-                                />
-
-
-                                <SummaryRow
-                                    label="Payment"
-                                    value={
-                                        form.paymentMethod
-                                    }
-                                />
-
-                            </div>
-
-
-                            {/* COUPON */}
-
-                            <div className="
-                                mt-8
-                            ">
-
-                                <label className="
-                                    text-sm
-                                    font-medium
-                                    text-neutral-700
-                                ">
-                                    Coupon code
-                                </label>
-
-
-                                <input
-                                    value={
-                                        form.couponCode
-                                    }
-                                    onChange={
-                                        (event) =>
-                                            updateField(
-                                                "couponCode",
-                                                event.target.value
-                                            )
-                                    }
-                                    placeholder="Optional"
-                                    className="
-                                        mt-2
-                                        w-full
-                                        rounded-xl
-                                        border
-                                        border-neutral-200
-                                        px-4
-                                        py-3
-                                        text-sm
-                                        uppercase
-                                        outline-none
-                                        focus:border-black
-                                    "
-                                />
-
-                            </div>
-
-
-                            {/* PAYMENT METHOD */}
-
-                            <div className="
-                                mt-8
-                            ">
-
-                                <p className="
-                                    text-sm
-                                    font-medium
-                                    text-neutral-700
-                                ">
-                                    Payment method
-                                </p>
-
-
-                                <div className="
-                                    mt-3
-                                    grid
-                                    gap-3
-                                    sm:grid-cols-2
-                                ">
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            updateField(
-                                                "paymentMethod",
-                                                "COD"
-                                            )
-                                        }
-                                        className={`
-                                            rounded-2xl
-                                            border
-                                            p-4
-                                            text-left
-                                            transition
-                                            ${
-                                                form.paymentMethod === "COD"
-                                                    ? "border-black bg-black text-white"
-                                                    : "border-neutral-200 bg-white"
-                                            }
-                                        `}
-                                    >
-
-                                        <p className="
-                                            text-sm
-                                            font-semibold
-                                        ">
-                                            Cash on delivery
-                                        </p>
-
-
-                                        <p className={`
-                                            mt-1
-                                            text-xs
-                                            ${
-                                                form.paymentMethod === "COD"
-                                                    ? "text-neutral-300"
-                                                    : "text-neutral-500"
-                                            }
-                                        `}>
-                                            Pay when the package
-                                            is delivered.
-                                        </p>
-
-                                    </button>
-
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            updateField(
-                                                "paymentMethod",
-                                                "ONLINE"
-                                            )
-                                        }
-                                        className={`
-                                            rounded-2xl
-                                            border
-                                            p-4
-                                            text-left
-                                            transition
-                                            ${
-                                                form.paymentMethod === "ONLINE"
-                                                    ? "border-black bg-black text-white"
-                                                    : "border-neutral-200 bg-white"
-                                            }
-                                        `}
-                                    >
-
-                                        <p className="
-                                            text-sm
-                                            font-semibold
-                                        ">
-                                            Online payment
-                                        </p>
-
-
-                                        <p className={`
-                                            mt-1
-                                            text-xs
-                                            ${
-                                                form.paymentMethod === "ONLINE"
-                                                    ? "text-neutral-300"
-                                                    : "text-neutral-500"
-                                            }
-                                        `}>
-                                            Pay securely online.
-                                        </p>
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-
-                            {/* PRICE */}
-
-                            {priceData && (
-
-                                <div className="
-                                    mt-8
-                                    rounded-2xl
-                                    bg-neutral-50
-                                    p-5
-                                ">
-
-                                    <div className="
-                                        flex
-                                        justify-between
-                                        text-sm
-                                    ">
-
-                                        <span className="
-                                            text-neutral-500
-                                        ">
-                                            Original amount
-                                        </span>
-
-
-                                        <span className="
-                                            font-medium
-                                        ">
-                                            ₹
-                                            {Number(
-                                                priceData.originalAmount ??
-                                                priceData.price ??
-                                                0
-                                            ).toFixed(2)}
-                                        </span>
-
-                                    </div>
-
-
-                                    <div className="
-                                        mt-3
-                                        flex
-                                        justify-between
-                                        text-sm
-                                    ">
-
-                                        <span className="
-                                            text-neutral-500
-                                        ">
-                                            Discount
-                                        </span>
-
-
-                                        <span className="
-                                            font-medium
-                                        ">
-                                            - ₹
-                                            {Number(
-                                                priceData.discountAmount ??
-                                                0
-                                            ).toFixed(2)}
-                                        </span>
-
-                                    </div>
-
-
-                                    <div className="
-                                        mt-4
-                                        flex
-                                        justify-between
-                                        border-t
-                                        border-neutral-200
-                                        pt-4
-                                    ">
-
-                                        <span className="
-                                            font-semibold
-                                        ">
-                                            Total
-                                        </span>
-
-
-                                        <span className="
-                                            text-xl
-                                            font-bold
-                                        ">
-                                            ₹
-                                            {Number(
-                                                priceData.finalAmount ??
-                                                priceData.price ??
-                                                0
-                                            ).toFixed(2)}
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            )}
-
+                    {/* Error */}
+                    {error && (
+                        <div className="mt-8 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                            {error}
                         </div>
-
                     )}
 
 
-                    {/* ACTIONS */}
+                    {/* Navigation */}
+                    <div className="mt-10 flex items-center justify-between border-t border-neutral-100 pt-6">
 
-                    <div className="
-                        mt-10
-                        flex
-                        gap-3
-                    ">
-
-                        {step > 1 && (
-
+                        {step > 1 ? (
                             <button
                                 type="button"
-                                onClick={() => {
-                                    setError("");
-                                    setStep(
-                                        (previous) =>
-                                            previous - 1
-                                    );
-                                }}
-                                className="
-                                    rounded-xl
-                                    border
-                                    border-neutral-200
-                                    bg-white
-                                    px-5
-                                    py-3
-                                    text-sm
-                                    font-semibold
-                                    text-black
-                                    transition
-                                    hover:bg-neutral-50
-                                "
+                                onClick={handleBack}
+                                disabled={loading}
+                                className="rounded-xl border border-neutral-200 bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-neutral-50 disabled:opacity-50"
                             >
-                                Back
+                                ← Back
                             </button>
-
+                        ) : (
+                            <div />
                         )}
 
 
-                        <button
-                            type="button"
-                            onClick={
-                                step === 4
-                                    ? handlePlaceOrder
-                                    : goNext
-                            }
-                            disabled={
-                                loading ||
-                                previewLoading
-                            }
-                            className="
-                                flex-1
-                                rounded-xl
-                                bg-black
-                                px-5
-                                py-3
-                                text-sm
-                                font-semibold
-                                text-white
-                                transition
-                                hover:bg-neutral-800
-                                disabled:cursor-not-allowed
-                                disabled:opacity-50
-                            "
-                        >
-
-                            {loading
-                                ? "Placing order..."
-                                : previewLoading
-                                    ? "Calculating price..."
-                                    : step === 4
-                                        ? "Place order"
-                                        : "Continue"
-                            }
-
-                        </button>
+                        {step < 3 ? (
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                className="rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
+                            >
+                                Continue →
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className="rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                {loading
+                                    ? "Placing order..."
+                                    : "Place Order"}
+                            </button>
+                        )}
 
                     </div>
 
@@ -1440,101 +907,5 @@ export default function PlaceOrder() {
             </main>
 
         </div>
-    );
-}
-
-
-/* FIELD */
-
-function Field({
-    label,
-    value,
-    onChange,
-    placeholder,
-    type = "text"
-}) {
-
-    return (
-
-        <div>
-
-            <label className="
-                text-sm
-                font-medium
-                text-neutral-700
-            ">
-                {label}
-            </label>
-
-
-            <input
-                type={type}
-                value={value}
-                onChange={
-                    (event) =>
-                        onChange(
-                            event.target.value
-                        )
-                }
-                placeholder={placeholder}
-                className="
-                    mt-2
-                    w-full
-                    rounded-xl
-                    border
-                    border-neutral-200
-                    px-4
-                    py-3
-                    text-sm
-                    outline-none
-                    transition
-                    focus:border-black
-                "
-            />
-
-        </div>
-
-    );
-}
-
-
-/* SUMMARY ROW */
-
-function SummaryRow({
-    label,
-    value
-}) {
-
-    return (
-
-        <div className="
-            flex
-            items-center
-            justify-between
-            gap-5
-            rounded-xl
-            bg-neutral-50
-            px-4
-            py-3
-        ">
-
-            <span className="
-                text-sm
-                text-neutral-500
-            ">
-                {label}
-            </span>
-
-
-            <span className="
-                text-right
-                text-sm
-                font-semibold
-            ">
-                {value}
-            </span>
-
-        </div>
-
     );
 }

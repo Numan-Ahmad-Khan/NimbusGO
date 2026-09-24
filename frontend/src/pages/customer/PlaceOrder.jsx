@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { logout } from "../services/auth";
-import { getOrders } from "../services/order";
-
-import { LogoOnly } from "../components/Logo";
-
+import { logout } from "../../services/auth";
+import { getOrders } from "../../services/order";
+import { LogoOnly } from "../../components/Logo";
 
 export default function CustomerDashboard() {
 

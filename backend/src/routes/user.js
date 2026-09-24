@@ -67,4 +67,11 @@ router.delete(
     userController.deleteAccount,
 );
 
+router.get(
+    "/user/order/:orderId/payment-status",
+    authentication,
+    authorization("USER"),
+    userController.getPaymentStatus,
+);
+
 module.exports = router;

@@ -1464,6 +1464,38 @@ const placeOrder = async (req, res) => {
 };
 
 
+const getPaymentStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        const order = await Order.findOne({
+            where: {
+                id: orderId,
+                userId: req.user.userId,
+            },
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                msg: "Order not found",
+            });
+        }
+
+        return res.json({
+            orderId: order.id,
+            paymentMethod: order.paymentMethod,
+            paymentStatus: order.paymentStatus,
+        });
+
+    } catch (err) {
+        console.log(err);
+
+        return res.status(500).json({
+            msg: "Internal server error",
+        });
+    }
+};
+
 /*
 |--------------------------------------------------------------------------
 | TRACK ORDER
@@ -1940,6 +1972,7 @@ module.exports = {
     getOrders,
     previewOrder,
     placeOrder,
+    getPaymentStatus,
     trackOrder,
     changePassword,
     changeAccountStatus,

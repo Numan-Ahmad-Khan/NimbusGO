@@ -12,7 +12,8 @@ import RiderVerification from "./pages/rider/RiderVerification";
 import RiderDashboard from "./pages/rider/RiderDashboard";
 import RiderSignup from "./pages/rider/RiderSignup";
 import OrderSuccess from "./pages/customer/OrderSuccess";
-
+import OrderResult from "./pages/customer/OrderResult";
+import PaymentWaiting from "./pages/customer/PaymentWaiting";
 
 function App() {
     return (
@@ -96,6 +97,22 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+                <Route
+                    path="/order-result"
+                    element={
+                        <ProtectedRoute>
+                            <OrderResult />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                path="/payment-waiting"
+                element={
+                    <ProtectedRoute>
+                        <PaymentWaiting />
+                    </ProtectedRoute>
+                }
+            />
             </Routes>
         </BrowserRouter>
     );

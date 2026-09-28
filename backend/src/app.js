@@ -57,6 +57,8 @@ app.use("/", otp);
 const rider = require("./routes/rider");
 app.use("/", rider);
 
+const webhook = require("./routes/payment");
+app.use("/",webhook)
 startServer();
 
 module.exports = app;

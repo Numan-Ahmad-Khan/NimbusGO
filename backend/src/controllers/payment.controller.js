@@ -8,6 +8,7 @@ const webhook = async (req, res) => {
     try {
         const signature =
             req.headers["x-razorpay-signature"];
+            console.log(signature)
 
         // Verify webhook signature using raw body
         const expectedSignature =
@@ -133,58 +134,58 @@ const webhook = async (req, res) => {
             ==========================================
             */
 
-            if (order.couponCode) {
-                const coupon =
-                    await Coupon.findOne({
-                        where: {
-                            code: order.couponCode,
-                        },
-                    });
+            // if (order.couponCode) {
+            //     const coupon =
+            //         await Coupon.findOne({
+            //             where: {
+            //                 code: order.couponCode,
+            //             },
+            //         });
 
-                if (coupon) {
-                    const existingUsage =
-                        await CouponUsage.findOne({
-                            where: {
-                                couponId:
-                                    coupon.id,
-                                userId:
-                                    order.userId,
-                                orderId:
-                                    order.id,
-                            },
-                        });
+            //     if (coupon) {
+            //         const existingUsage =
+            //             await CouponUsage.findOne({
+            //                 where: {
+            //                     couponId:
+            //                         coupon.id,
+            //                     userId:
+            //                         order.userId,
+            //                     orderId:
+            //                         order.id,
+            //                 },
+            //             });
 
-                    if (!existingUsage) {
-                        await CouponUsage.create({
-                            id:
-                                crypto.randomUUID(),
-                            couponId:
-                                coupon.id,
-                            userId:
-                                order.userId,
-                            orderId:
-                                order.id,
-                            discountAmount:
-                                order.discountAmount,
-                        });
+            //         if (!existingUsage) {
+            //             await CouponUsage.create({
+            //                 id:
+            //                     crypto.randomUUID(),
+            //                 couponId:
+            //                     coupon.id,
+            //                 userId:
+            //                     order.userId,
+            //                 orderId:
+            //                     order.id,
+            //                 discountAmount:
+            //                     order.discountAmount,
+            //             });
 
-                        await coupon.increment(
-                            "usedCount",
-                            {
-                                by: 1,
-                            }
-                        );
+            //             await coupon.increment(
+            //                 "usedCount",
+            //                 {
+            //                     by: 1,
+            //                 }
+            //             );
 
-                        console.log(
-                            `Coupon ${coupon.code} usage recorded`
-                        );
-                    } else {
-                        console.log(
-                            `Coupon already recorded for order ${order.id}`
-                        );
-                    }
-                }
-            }
+            //             console.log(
+            //                 `Coupon ${coupon.code} usage recorded`
+            //             );
+            //         } else {
+            //             console.log(
+            //                 `Coupon already recorded for order ${order.id}`
+            //             );
+            //         }
+            //     }
+            // }
         }
 
         /*

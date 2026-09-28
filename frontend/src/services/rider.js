@@ -12,7 +12,7 @@ async function handleResponse(response) {
         }
 
         if (data.message) {
-            // throw new Error(data.message);
+            throw new Error(data.message);
         }
 
         throw new Error("Something went wrong.");

@@ -2,7 +2,7 @@ require('dotenv').config();
 const cors = require("cors");
 const express = require("express");
 const app = express();
-
+const errorHandler = require("./middleware/errorHandler");
 const db = require("./database/Postgres");
 const port = process.env.PORT ||3000;
 
@@ -59,6 +59,8 @@ app.use("/", rider);
 
 const webhook = require("./routes/payment");
 app.use("/",webhook)
+
+app.use(errorHandler);
 startServer();
 
 module.exports = app;

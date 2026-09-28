@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const Rider = require("../models/Rider");
 const User = require("../models/Users");
+const AppError = require("../utils/appError");
+
 
 const signupUser = async (name, email, password, role) => {
 
@@ -16,6 +18,7 @@ const signupUser = async (name, email, password, role) => {
     return createdUser;
 };
 
+
 const loginUser = async (email, password) => {
 
     const user = await User.findOne({
@@ -25,15 +28,17 @@ const loginUser = async (email, password) => {
     });
 
     if (!user) {
-        const error = new Error("Invalid Credentials");
-        error.statusCode = 401;
-        throw error;
+        throw new AppError(
+            "Invalid email or password",
+            401
+        );
     }
 
     if (!user.isActive) {
-        const error = new Error("User deactivated");
-        error.statusCode = 403;
-        throw error;
+        throw new AppError(
+            "User deactivated",
+            403
+        );
     }
 
     const verification = await bcrypt.compare(
@@ -42,15 +47,23 @@ const loginUser = async (email, password) => {
     );
 
     if (!verification) {
-        const error = new Error("Invalid password");
-        error.statusCode = 401;
-        throw error;
+        throw new AppError(
+            "Invalid email or password",
+            401
+        );
     }
 
     return user;
 };
 
-const signupRider = async (name, email, password, latitude, longitude) => {
+
+const signupRider = async (
+    name,
+    email,
+    password,
+    latitude,
+    longitude
+) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -65,6 +78,7 @@ const signupRider = async (name, email, password, latitude, longitude) => {
     return createdRider;
 };
 
+
 const loginRider = async (email, password) => {
 
     const rider = await Rider.findOne({
@@ -74,15 +88,17 @@ const loginRider = async (email, password) => {
     });
 
     if (!rider) {
-        const error = new Error("Invalid Credentials");
-        error.statusCode = 401;
-        throw error;
+        throw new AppError(
+            "Invalid email or password",
+            401
+        );
     }
 
     if (!rider.isActive) {
-        const error = new Error("Rider has account deactivated");
-        error.statusCode = 403;
-        throw error;
+        throw new AppError(
+            "Rider account deactivated",
+            403
+        );
     }
 
     const verification = await bcrypt.compare(
@@ -91,13 +107,15 @@ const loginRider = async (email, password) => {
     );
 
     if (!verification) {
-        const error = new Error("Invalid password");
-        error.statusCode = 401;
-        throw error;
+        throw new AppError(
+            "Invalid email or password",
+            401
+        );
     }
 
     return rider;
 };
+
 
 module.exports = {
     signupUser,

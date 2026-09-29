@@ -419,6 +419,56 @@ export default function AdminDashboard() {
                 "Checkpoint updated."
             );
 
+
+            // Find the checkpoint that was assigned
+            const checkpoint =
+                checkpoints.find(
+                    item =>
+                        String(item.id) ===
+                        String(checkpointId)
+                );
+
+
+            // Create the object expected by the UI
+            const currentCheckpoint =
+                checkpoint
+                    ? {
+                        id: checkpoint.id,
+                        checkpointName:
+                            checkpoint.checkpointName,
+                        checkpointDetail:
+                            checkpoint.checkpointDetail,
+                        longitude:
+                            checkpoint.longitude,
+                        latitude:
+                            checkpoint.latitude
+                    }
+                    : null;
+
+
+            // Update selected order immediately
+            setSelectedOrder(
+                previous => ({
+                    ...previous,
+                    currentCheckpoint
+                })
+            );
+
+
+            // Update order in Orders list immediately
+            setOrders(
+                previous =>
+                    previous.map(order =>
+                        order.id === selectedOrder.id
+                            ? {
+                                ...order,
+                                currentCheckpoint
+                            }
+                            : order
+                    )
+            );
+
+
             setCheckpointId("");
 
         }
@@ -681,6 +731,12 @@ export default function AdminDashboard() {
                 .includes(search) ||
 
             String(order.userEmail || "")
+                .toLowerCase()
+                .includes(search) ||
+
+            String(
+                order.currentCheckpoint?.checkpointName || ""
+            )
                 .toLowerCase()
                 .includes(search)
 
@@ -1398,6 +1454,22 @@ export default function AdminDashboard() {
                                                                         "Unknown Email"}
                                                                 </p>
 
+                                                                {order.currentCheckpoint && (
+
+                                                                    <p className="
+                                                                        mt-1
+                                                                        text-xs
+                                                                        text-neutral-500
+                                                                    ">
+                                                                        📍{" "}
+                                                                        {
+                                                                            order.currentCheckpoint
+                                                                                .checkpointName
+                                                                        }
+                                                                    </p>
+
+                                                                )}
+
                                                             </div>
 
 
@@ -1443,7 +1515,7 @@ export default function AdminDashboard() {
                                             )
                                         }
                                         placeholder="
-                                            Search by order ID, name, customer or status...
+                                            Search by order ID, name, customer, status or checkpoint...
                                         "
                                         className="
                                             w-full
@@ -1476,7 +1548,7 @@ export default function AdminDashboard() {
 
                                         <table className="
                                             w-full
-                                            min-w-[800px]
+                                            min-w-[1000px]
                                             text-sm
                                         ">
 
@@ -1531,6 +1603,16 @@ export default function AdminDashboard() {
                                                     <th className="
                                                         px-5
                                                         py-4
+                                                        text-left
+                                                        font-medium
+                                                        text-neutral-500
+                                                    ">
+                                                        Current Location
+                                                    </th>
+
+                                                    <th className="
+                                                        px-5
+                                                        py-4
                                                         text-right
                                                         font-medium
                                                         text-neutral-500
@@ -1565,6 +1647,7 @@ export default function AdminDashboard() {
                                                                 {order.id}
                                                             </td>
 
+
                                                             <td className="
                                                                 px-5
                                                                 py-4
@@ -1572,6 +1655,7 @@ export default function AdminDashboard() {
                                                                 {order.orderName ||
                                                                     "—"}
                                                             </td>
+
 
                                                             <td className="
                                                                 px-5
@@ -1600,6 +1684,7 @@ export default function AdminDashboard() {
 
                                                             </td>
 
+
                                                             <td className="
                                                                 px-5
                                                                 py-4
@@ -1612,6 +1697,58 @@ export default function AdminDashboard() {
                                                                 />
 
                                                             </td>
+
+
+                                                            {/* CURRENT LOCATION */}
+
+                                                            <td className="
+                                                                px-5
+                                                                py-4
+                                                            ">
+
+                                                                {order.currentCheckpoint ? (
+
+                                                                    <div>
+
+                                                                        <p className="
+                                                                            font-medium
+                                                                            text-neutral-900
+                                                                        ">
+                                                                            {
+                                                                                order
+                                                                                    .currentCheckpoint
+                                                                                    .checkpointName
+                                                                            }
+                                                                        </p>
+
+                                                                        <p className="
+                                                                            mt-1
+                                                                            max-w-xs
+                                                                            text-xs
+                                                                            text-neutral-500
+                                                                        ">
+                                                                            {
+                                                                                order
+                                                                                    .currentCheckpoint
+                                                                                    .checkpointDetail
+                                                                            }
+                                                                        </p>
+
+                                                                    </div>
+
+                                                                ) : (
+
+                                                                    <span className="
+                                                                        text-sm
+                                                                        text-neutral-400
+                                                                    ">
+                                                                        Not dispatched
+                                                                    </span>
+
+                                                                )}
+
+                                                            </td>
+
 
                                                             <td className="
                                                                 px-5
@@ -2309,7 +2446,6 @@ export default function AdminDashboard() {
                                                         </div>
 
                                                     </div>
-
                                                 )
                                             )}
 
@@ -2510,6 +2646,160 @@ export default function AdminDashboard() {
                                         selectedOrder.status
                                     }
                                 />
+
+                            </div>
+
+                        </div>
+
+
+                        {/* CURRENT LOCATION */}
+
+                        <div className="
+                            mt-3
+                            rounded-xl
+                            border
+                            border-neutral-200
+                            bg-neutral-50
+                            p-5
+                        ">
+
+                            <div className="
+                                flex
+                                items-start
+                                gap-4
+                            ">
+
+                                <div className="
+                                    flex
+                                    h-10
+                                    w-10
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    rounded-xl
+                                    bg-black
+                                    text-white
+                                ">
+                                    📍
+                                </div>
+
+
+                                <div className="
+                                    min-w-0
+                                ">
+
+                                    <p className="
+                                        text-xs
+                                        font-medium
+                                        text-neutral-400
+                                    ">
+                                        Current location
+                                    </p>
+
+
+                                    {selectedOrder.currentCheckpoint ? (
+
+                                        <>
+
+                                            <p className="
+                                                mt-1
+                                                text-sm
+                                                font-bold
+                                                text-neutral-900
+                                            ">
+                                                {
+                                                    selectedOrder
+                                                        .currentCheckpoint
+                                                        .checkpointName
+                                                }
+                                            </p>
+
+
+                                            <p className="
+                                                mt-1
+                                                text-sm
+                                                leading-6
+                                                text-neutral-500
+                                            ">
+                                                {
+                                                    selectedOrder
+                                                        .currentCheckpoint
+                                                        .checkpointDetail
+                                                }
+                                            </p>
+
+
+                                            <div className="
+                                                mt-3
+                                                grid
+                                                grid-cols-2
+                                                gap-3
+                                            ">
+
+                                                <div>
+
+                                                    <p className="
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        Latitude
+                                                    </p>
+
+                                                    <p className="
+                                                        mt-1
+                                                        text-xs
+                                                        font-medium
+                                                    ">
+                                                        {
+                                                            selectedOrder
+                                                                .currentCheckpoint
+                                                                .latitude
+                                                        }
+                                                    </p>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <p className="
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        Longitude
+                                                    </p>
+
+                                                    <p className="
+                                                        mt-1
+                                                        text-xs
+                                                        font-medium
+                                                    ">
+                                                        {
+                                                            selectedOrder
+                                                                .currentCheckpoint
+                                                                .longitude
+                                                        }
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+                                        </>
+
+                                    ) : (
+
+                                        <p className="
+                                            mt-1
+                                            text-sm
+                                            text-neutral-500
+                                        ">
+                                            Not dispatched yet
+                                        </p>
+
+                                    )}
+
+                                </div>
 
                             </div>
 
@@ -3096,6 +3386,7 @@ function TextInput({
         </div>
 
     );
+
 }
 
 

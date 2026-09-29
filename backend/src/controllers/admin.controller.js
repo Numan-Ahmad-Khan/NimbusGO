@@ -5,6 +5,10 @@ const Checkpoint = require("../models/Checkpoint");
 
 const { sendEmail } = require("../services/email.services");
 
+
+// =========================
+// GET ADMIN PROFILE
+// =========================
 const getMe = async (req, res) => {
     try {
         const user = await User.findOne({
@@ -36,8 +40,12 @@ const getMe = async (req, res) => {
 };
 
 
+// =========================
+// GET SINGLE ORDER
+// =========================
 const getOrder = async (req, res) => {
     try {
+
         const order = await Order.findOne({
             where: {
                 id: req.params.id
@@ -46,7 +54,8 @@ const getOrder = async (req, res) => {
                 "id",
                 "userId",
                 "orderName",
-                "status"
+                "status",
+                "transitDetail"
             ]
         });
 
@@ -56,7 +65,8 @@ const getOrder = async (req, res) => {
             });
         }
 
-        // Get user separately — NO Sequelize relation
+
+        // Get user separately
         const user = await User.findOne({
             where: {
                 id: order.userId
@@ -67,16 +77,52 @@ const getOrder = async (req, res) => {
             ]
         });
 
+
+        // Get current checkpoint
+        let currentCheckpoint = null;
+
+        if (
+            order.transitDetail &&
+            order.transitDetail !== "No details yet"
+        ) {
+            currentCheckpoint = await Checkpoint.findOne({
+                where: {
+                    id: order.transitDetail
+                },
+                attributes: [
+                    "id",
+                    "checkpointName",
+                    "checkpointDetail",
+                    "longitude",
+                    "latitude"
+                ]
+            });
+        }
+
+
         return res.json({
             Success: "Order Status",
+
             Details: {
                 id: order.id,
                 orderName: order.orderName,
                 status: order.status,
+
                 userName: user?.name || "Unknown User",
-                userEmail: user?.email || "Unknown Email"
+                userEmail: user?.email || "Unknown Email",
+
+                currentCheckpoint: currentCheckpoint
+                    ? {
+                        id: currentCheckpoint.id,
+                        checkpointName: currentCheckpoint.checkpointName,
+                        checkpointDetail: currentCheckpoint.checkpointDetail,
+                        longitude: currentCheckpoint.longitude,
+                        latitude: currentCheckpoint.latitude
+                    }
+                    : null
             }
         });
+
     }
     catch (err) {
         console.log(err);
@@ -88,8 +134,12 @@ const getOrder = async (req, res) => {
 };
 
 
+// =========================
+// CHANGE ORDER STATUS
+// =========================
 const changeOrderStatus = async (req, res) => {
     try {
+
         const { status } = req.body;
 
         const order = await Order.findOne({
@@ -126,8 +176,12 @@ const changeOrderStatus = async (req, res) => {
 };
 
 
+// =========================
+// UPDATE CHECKPOINT
+// =========================
 const updateCheckpoint = async (req, res) => {
     try {
+
         const { checkpointId } = req.body;
 
         const order = await Order.findOne({
@@ -142,11 +196,13 @@ const updateCheckpoint = async (req, res) => {
             });
         }
 
+
         if (order.status !== "IN_TRANSIT") {
             return res.status(400).json({
                 msg: "Order not in transit"
             });
         }
+
 
         // Make sure checkpoint exists
         const checkpoint = await Checkpoint.findOne({
@@ -161,14 +217,18 @@ const updateCheckpoint = async (req, res) => {
             });
         }
 
+
+        // Store checkpoint ID in order
         order.transitDetail = checkpointId;
 
         await order.save();
+
 
         return res.json({
             msg: "Checkpoint Added",
             checkpoint
         });
+
     }
     catch (err) {
         console.log(err);
@@ -180,18 +240,24 @@ const updateCheckpoint = async (req, res) => {
 };
 
 
+// =========================
+// GET ALL ORDERS
+// =========================
 const getOrderList = async (req, res) => {
     try {
+
         const orders = await Order.findAll({
             attributes: [
                 "id",
                 "userId",
                 "orderName",
-                "status"
+                "status",
+                "transitDetail"
             ]
         });
 
-        // Get users separately — NO Sequelize relation
+
+        // Get users separately
         const users = await User.findAll({
             attributes: [
                 "id",
@@ -200,7 +266,8 @@ const getOrderList = async (req, res) => {
             ]
         });
 
-        // Create a map:
+
+        // Create user map
         // userId -> user name/email
         const userMap = new Map();
 
@@ -211,22 +278,98 @@ const getOrderList = async (req, res) => {
             });
         });
 
+
+        // Get all checkpoint IDs used by orders
+        const checkpointIds = orders
+            .map(order => order.transitDetail)
+            .filter(
+                checkpointId =>
+                    checkpointId &&
+                    checkpointId !== "No details yet"
+            );
+
+
+        // Get checkpoints
+        const checkpoints = checkpointIds.length
+            ? await Checkpoint.findAll({
+                where: {
+                    id: checkpointIds
+                },
+                attributes: [
+                    "id",
+                    "checkpointName",
+                    "checkpointDetail",
+                    "longitude",
+                    "latitude"
+                ]
+            })
+            : [];
+
+
+        // Create checkpoint map
+        // checkpointId -> checkpoint
+        const checkpointMap = new Map();
+
+        checkpoints.forEach(checkpoint => {
+            checkpointMap.set(
+                checkpoint.id,
+                checkpoint
+            );
+        });
+
+
+        // Build final order list
         const orderList = orders.map(order => {
+
             const user = userMap.get(order.userId);
 
+            const checkpoint = order.transitDetail
+                ? checkpointMap.get(order.transitDetail)
+                : null;
+
+
             return {
+
                 id: order.id,
+
                 orderName: order.orderName,
+
                 status: order.status,
 
-                userName: user?.name || "Unknown User",
-                userEmail: user?.email || "Unknown Email"
+
+                userName:
+                    user?.name ||
+                    "Unknown User",
+
+                userEmail:
+                    user?.email ||
+                    "Unknown Email",
+
+
+                currentCheckpoint: checkpoint
+                    ? {
+                        id: checkpoint.id,
+                        checkpointName:
+                            checkpoint.checkpointName,
+
+                        checkpointDetail:
+                            checkpoint.checkpointDetail,
+
+                        longitude:
+                            checkpoint.longitude,
+
+                        latitude:
+                            checkpoint.latitude
+                    }
+                    : null
             };
         });
+
 
         return res.json({
             Details: orderList
         });
+
     }
     catch (err) {
         console.log(err);
@@ -238,8 +381,12 @@ const getOrderList = async (req, res) => {
 };
 
 
+// =========================
+// GET USERS
+// =========================
 const getUserList = async (req, res) => {
     try {
+
         const users = await User.findAll({
             attributes: {
                 exclude: ["password"]
@@ -260,13 +407,18 @@ const getUserList = async (req, res) => {
 };
 
 
+// =========================
+// CHANGE RATES
+// =========================
 const changeRate = async (req, res) => {
     try {
+
         const {
             rateDistance,
             rateDimensions,
             rateWeight
         } = req.body;
+
 
         if (
             rateDistance === undefined ||
@@ -281,6 +433,7 @@ const changeRate = async (req, res) => {
             });
         }
 
+
         if (
             rateDimensions === undefined ||
             rateDimensions === null ||
@@ -293,6 +446,7 @@ const changeRate = async (req, res) => {
                 Error: "Cannot be empty/undefined"
             });
         }
+
 
         if (
             rateWeight === undefined ||
@@ -307,22 +461,36 @@ const changeRate = async (req, res) => {
             });
         }
 
+
         await Config.upsert({
+
             id: "SINGLETON",
 
-            rateKeyDistance: "RATE_PER_KM",
-            rateValueDistance: rateDistance,
+            rateKeyDistance:
+                "RATE_PER_KM",
 
-            rateKeyDimensions: "RATE_VOLUME",
-            rateValueDimensions: rateDimensions,
+            rateValueDistance:
+                rateDistance,
 
-            rateKeyWeight: "RATE_PER_KG",
-            rateValueWeight: rateWeight
+            rateKeyDimensions:
+                "RATE_VOLUME",
+
+            rateValueDimensions:
+                rateDimensions,
+
+            rateKeyWeight:
+                "RATE_PER_KG",
+
+            rateValueWeight:
+                rateWeight
+
         });
+
 
         return res.json({
             msg: "Success, rates have been updated"
         });
+
     }
     catch (err) {
         console.log(err);
@@ -334,8 +502,12 @@ const changeRate = async (req, res) => {
 };
 
 
+// =========================
+// ADD CHECKPOINT
+// =========================
 const addCheckpoint = async (req, res) => {
     try {
+
         const {
             checkpointName,
             checkpointDetail,
@@ -343,17 +515,29 @@ const addCheckpoint = async (req, res) => {
             latitude
         } = req.body;
 
+
         const checkpoint = await Checkpoint.create({
+
             checkpointName,
+
             checkpointDetail,
+
             longitude,
+
             latitude
+
         });
 
+
         return res.json({
-            msg: "Checkpoint Created Successfully",
+
+            msg:
+                "Checkpoint Created Successfully",
+
             checkpoint
+
         });
+
     }
     catch (err) {
         console.log(err);
@@ -365,21 +549,35 @@ const addCheckpoint = async (req, res) => {
 };
 
 
+// =========================
+// GET CHECKPOINT LIST
+// =========================
 const getCheckpointList = async (req, res) => {
     try {
+
         const checkpoints = await Checkpoint.findAll({
+
             attributes: [
+
                 "id",
+
                 "checkpointName",
+
                 "checkpointDetail",
+
                 "longitude",
+
                 "latitude"
+
             ]
+
         });
+
 
         return res.json({
             checkpoints
         });
+
     }
     catch (err) {
         console.log(err);
@@ -391,40 +589,76 @@ const getCheckpointList = async (req, res) => {
 };
 
 
+// =========================
+// TEST EMAIL
+// =========================
 const testEmail = async (req, res) => {
     try {
+
         await sendEmail(
+
             "sabreenafayaz08@gmail.com",
+
             "001 Backend Test Email",
+
             `
                 <h2>Email System Working!</h2>
-                <p>This email was sent using Nodemailer.</p>
-                <p>Your 001 backend email system is configured correctly.</p>
+
+                <p>
+                    This email was sent using Nodemailer.
+                </p>
+
+                <p>
+                    Your 001 backend email system is configured correctly.
+                </p>
             `
         );
 
+
         res.status(200).json({
-            message: "Test email sent successfully"
+
+            message:
+                "Test email sent successfully"
+
         });
+
     }
     catch (error) {
+
         res.status(500).json({
-            message: "Failed to send test email",
-            error: error.message
+
+            message:
+                "Failed to send test email",
+
+            error:
+                error.message
+
         });
+
     }
 };
 
 
 module.exports = {
+
     getMe,
+
     getOrder,
+
     changeOrderStatus,
+
     updateCheckpoint,
+
     getOrderList,
+
     getUserList,
+
     changeRate,
+
     addCheckpoint,
+
     getCheckpointList,
+
     testEmail
+
 };

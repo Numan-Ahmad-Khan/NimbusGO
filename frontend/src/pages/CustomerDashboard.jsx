@@ -5,6 +5,7 @@ import { logout } from "../services/auth";
 import { getOrders } from "../services/order";
 
 import { LogoOnly } from "../components/Logo";
+
 export default function CustomerDashboard() {
 
     const navigate = useNavigate();
@@ -25,12 +26,10 @@ export default function CustomerDashboard() {
         setError("");
         setLoading(true);
 
-
         try {
 
             const data =
                 await getOrders();
-
 
             setOrders(
                 data.orders || []
@@ -77,7 +76,6 @@ export default function CustomerDashboard() {
         if (!date) {
             return "";
         }
-
 
         return new Date(
             date
@@ -585,6 +583,7 @@ export default function CustomerDashboard() {
                     {/* ORDERS LIST */}
 
                     {!loading &&
+                        !error &&
                         orders.length > 0 && (
 
                         <div className="
@@ -606,6 +605,8 @@ export default function CustomerDashboard() {
                                         shadow-sm
                                     "
                                 >
+
+                                    {/* ORDER HEADER */}
 
                                     <div className="
                                         flex
@@ -682,6 +683,106 @@ export default function CustomerDashboard() {
 
                                     </div>
 
+
+                                    {/* CURRENT LOCATION */}
+
+                                    <div className="
+                                        mt-5
+                                        rounded-2xl
+                                        border
+                                        border-neutral-200
+                                        bg-neutral-50
+                                        p-5
+                                    ">
+
+                                        <div className="
+                                            flex
+                                            items-start
+                                            gap-4
+                                        ">
+
+                                            <div className="
+                                                flex
+                                                h-10
+                                                w-10
+                                                shrink-0
+                                                items-center
+                                                justify-center
+                                                rounded-xl
+                                                bg-black
+                                                text-white
+                                                text-sm
+                                                font-bold
+                                            ">
+                                                📍
+                                            </div>
+
+
+                                            <div className="
+                                                min-w-0
+                                            ">
+
+                                                <p className="
+                                                    text-xs
+                                                    font-medium
+                                                    text-neutral-400
+                                                ">
+                                                    Current location
+                                                </p>
+
+
+                                                {order.currentCheckpoint ? (
+
+                                                    <>
+                                                        <p className="
+                                                            mt-1
+                                                            text-sm
+                                                            font-bold
+                                                            text-black
+                                                        ">
+                                                            {
+                                                                order
+                                                                    .currentCheckpoint
+                                                                    .checkpointName
+                                                            }
+                                                        </p>
+
+
+                                                        <p className="
+                                                            mt-1
+                                                            text-sm
+                                                            leading-6
+                                                            text-neutral-500
+                                                        ">
+                                                            {
+                                                                order
+                                                                    .currentCheckpoint
+                                                                    .checkpointDetail
+                                                            }
+                                                        </p>
+
+                                                    </>
+
+                                                ) : (
+
+                                                    <p className="
+                                                        mt-1
+                                                        text-sm
+                                                        text-neutral-500
+                                                    ">
+                                                        Not dispatched yet
+                                                    </p>
+
+                                                )}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {/* ORDER DETAILS */}
 
                                     <div className="
                                         mt-5

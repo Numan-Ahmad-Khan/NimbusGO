@@ -66,13 +66,11 @@ const getOrders = async (req, res) => {
             },
         });
 
-
         if (!user) {
             return res.status(404).json({
                 msg: "User not found",
             });
         }
-
 
         if (!user.isActive) {
             return res.status(400).json({
@@ -82,6 +80,7 @@ const getOrders = async (req, res) => {
         }
 
 
+        // Get user's orders
         const orders = await Order.findAll({
             where: {
                 userId: req.user.userId,
@@ -104,6 +103,7 @@ const getOrders = async (req, res) => {
                 "paymentMethod",
                 "paymentStatus",
                 "status",
+                "transitDetail",
                 "createdAt",
                 "updatedAt",
             ],
@@ -114,11 +114,97 @@ const getOrders = async (req, res) => {
         });
 
 
-        return res.json({
-            orders,
+        // Get checkpoint IDs stored in transitDetail
+        const checkpointIds = orders
+            .map(order => order.transitDetail)
+            .filter(
+                checkpointId =>
+                    checkpointId &&
+                    checkpointId !== "No details yet"
+            );
+
+
+        // Get all matching checkpoints
+        const checkpoints = checkpointIds.length
+            ? await Checkpoint.findAll({
+                where: {
+                    id: {
+                        [Op.in]: checkpointIds,
+                    },
+                },
+
+                attributes: [
+                    "id",
+                    "checkpointName",
+                    "checkpointDetail",
+                    "longitude",
+                    "latitude",
+                ],
+            })
+            : [];
+
+
+        // Create checkpoint map
+        const checkpointMap = new Map();
+
+        checkpoints.forEach(checkpoint => {
+            checkpointMap.set(
+                String(checkpoint.id),
+                checkpoint
+            );
         });
 
-    } catch (err) {
+
+        // Add current checkpoint to every order
+        const ordersWithCheckpoint = orders.map(order => {
+
+            const checkpoint = order.transitDetail
+                ? checkpointMap.get(
+                    String(order.transitDetail)
+                )
+                : null;
+
+
+            return {
+                ...order.toJSON(),
+
+                currentCheckpoint: checkpoint
+                    ? {
+                        id: checkpoint.id,
+
+                        checkpointName:
+                            checkpoint.checkpointName,
+
+                        checkpointDetail:
+                            checkpoint.checkpointDetail,
+
+                        longitude:
+                            checkpoint.longitude,
+
+                        latitude:
+                            checkpoint.latitude,
+                    }
+                    : null,
+            };
+        });
+
+
+        console.log(
+            "Orders sent to customer:",
+            JSON.stringify(
+                ordersWithCheckpoint,
+                null,
+                2
+            )
+        );
+
+
+        return res.json({
+            orders: ordersWithCheckpoint,
+        });
+
+    }
+    catch (err) {
 
         console.log(err);
 

@@ -10,15 +10,9 @@ export default function CustomerDashboard() {
 
     const navigate = useNavigate();
 
-
-    const [orders, setOrders] =
-        useState([]);
-
-    const [loading, setLoading] =
-        useState(true);
-
-    const [error, setError] =
-        useState("");
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
 
     async function loadOrders() {
@@ -28,14 +22,19 @@ export default function CustomerDashboard() {
 
         try {
 
-            const data =
-                await getOrders();
+            const data = await getOrders();
 
-            setOrders(
-                data.orders || []
+            console.log(
+                "Customer orders response:",
+                data
             );
 
-        } catch (error) {
+            setOrders(
+                data?.orders || []
+            );
+
+        }
+        catch (error) {
 
             console.log(
                 "Failed to load orders:",
@@ -43,18 +42,23 @@ export default function CustomerDashboard() {
             );
 
             setError(
-                error.message
+                error.message ||
+                "Failed to load orders."
             );
 
-        } finally {
+        }
+        finally {
 
             setLoading(false);
+
         }
     }
 
 
     useEffect(() => {
+
         loadOrders();
+
     }, []);
 
 
@@ -93,11 +97,13 @@ export default function CustomerDashboard() {
     function getStatusStyle(status) {
 
         if (status === "DELIVERED") {
+
             return `
                 bg-green-50
                 text-green-700
                 border-green-200
             `;
+
         }
 
 
@@ -105,11 +111,24 @@ export default function CustomerDashboard() {
             status === "FAILED" ||
             status === "REJECTED"
         ) {
+
             return `
                 bg-red-50
                 text-red-700
                 border-red-200
             `;
+
+        }
+
+
+        if (status === "IN_TRANSIT") {
+
+            return `
+                bg-blue-50
+                text-blue-700
+                border-blue-200
+            `;
+
         }
 
 
@@ -122,6 +141,7 @@ export default function CustomerDashboard() {
 
 
     return (
+
         <div className="
             min-h-screen
             bg-[#fafafa]
@@ -456,6 +476,7 @@ export default function CustomerDashboard() {
                     {/* ERROR */}
 
                     {error && (
+
                         <div className="
                             mt-6
                             rounded-2xl
@@ -469,12 +490,14 @@ export default function CustomerDashboard() {
                         ">
                             {error}
                         </div>
+
                     )}
 
 
                     {/* LOADING */}
 
                     {loading && (
+
                         <div className="
                             mt-6
                             rounded-3xl
@@ -494,6 +517,7 @@ export default function CustomerDashboard() {
                             </p>
 
                         </div>
+
                     )}
 
 
@@ -503,81 +527,82 @@ export default function CustomerDashboard() {
                         !error &&
                         orders.length === 0 && (
 
-                        <div className="
-                            mt-6
-                            rounded-3xl
-                            border
-                            border-dashed
-                            border-neutral-300
-                            bg-white
-                            px-6
-                            py-14
-                            text-center
-                        ">
-
                             <div className="
-                                mx-auto
-                                flex
-                                h-12
-                                w-12
-                                items-center
-                                justify-center
-                                rounded-2xl
-                                bg-neutral-100
-                                text-lg
-                                font-bold
+                                mt-6
+                                rounded-3xl
+                                border
+                                border-dashed
+                                border-neutral-300
+                                bg-white
+                                px-6
+                                py-14
+                                text-center
                             ">
-                                —
+
+                                <div className="
+                                    mx-auto
+                                    flex
+                                    h-12
+                                    w-12
+                                    items-center
+                                    justify-center
+                                    rounded-2xl
+                                    bg-neutral-100
+                                    text-lg
+                                    font-bold
+                                ">
+                                    —
+                                </div>
+
+
+                                <h3 className="
+                                    mt-5
+                                    text-base
+                                    font-semibold
+                                ">
+                                    No orders yet
+                                </h3>
+
+
+                                <p className="
+                                    mx-auto
+                                    mt-2
+                                    max-w-sm
+                                    text-sm
+                                    leading-6
+                                    text-neutral-500
+                                ">
+                                    Once you create a delivery,
+                                    your recent orders will
+                                    appear here.
+                                </p>
+
+
+                                <button
+                                    onClick={() =>
+                                        navigate(
+                                            "/place-order"
+                                        )
+                                    }
+                                    className="
+                                        mt-6
+                                        rounded-xl
+                                        bg-black
+                                        px-5
+                                        py-3
+                                        text-sm
+                                        font-semibold
+                                        text-white
+                                        transition
+                                        hover:bg-neutral-800
+                                    "
+                                >
+                                    Create your first order
+                                </button>
+
                             </div>
 
-
-                            <h3 className="
-                                mt-5
-                                text-base
-                                font-semibold
-                            ">
-                                No orders yet
-                            </h3>
-
-
-                            <p className="
-                                mx-auto
-                                mt-2
-                                max-w-sm
-                                text-sm
-                                leading-6
-                                text-neutral-500
-                            ">
-                                Once you create a delivery,
-                                your recent orders will
-                                appear here.
-                            </p>
-
-
-                            <button
-                                onClick={() =>
-                                    navigate(
-                                        "/place-order"
-                                    )
-                                }
-                                className="
-                                    mt-6
-                                    rounded-xl
-                                    bg-black
-                                    px-5
-                                    py-3
-                                    text-sm
-                                    font-semibold
-                                    text-white
-                                    transition
-                                    hover:bg-neutral-800
-                                "
-                            >
-                                Create your first order
-                            </button>
-
-                        </div>
-                    )}
+                        )}
 
 
                     {/* ORDERS LIST */}
@@ -586,286 +611,357 @@ export default function CustomerDashboard() {
                         !error &&
                         orders.length > 0 && (
 
-                        <div className="
-                            mt-6
-                            space-y-4
-                        ">
+                            <div className="
+                                mt-6
+                                space-y-4
+                            ">
 
-                            {orders.map(
-                                (order) => (
+                                {orders.map(
+                                    (order) => (
 
-                                <div
-                                    key={order.id}
-                                    className="
-                                        rounded-3xl
-                                        border
-                                        border-neutral-200
-                                        bg-white
-                                        p-6
-                                        shadow-sm
-                                    "
-                                >
-
-                                    {/* ORDER HEADER */}
-
-                                    <div className="
-                                        flex
-                                        flex-col
-                                        gap-5
-                                        sm:flex-row
-                                        sm:items-center
-                                        sm:justify-between
-                                    ">
-
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Order
-                                            </p>
-
-
-                                            <h3 className="
-                                                mt-1
-                                                text-lg
-                                                font-bold
-                                            ">
-                                                {order.orderName}
-                                            </h3>
-
-
-                                            <p className="
-                                                mt-1
-                                                break-all
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                #{order.id}
-                                            </p>
-
-                                        </div>
-
-
-                                        <div className="
-                                            flex
-                                            items-center
-                                            gap-3
-                                        ">
-
-                                            <span className={`
-                                                rounded-full
+                                        <div
+                                            key={order.id}
+                                            className="
+                                                rounded-3xl
                                                 border
-                                                px-3
-                                                py-1.5
-                                                text-xs
-                                                font-semibold
-                                                ${getStatusStyle(
-                                                    order.status
-                                                )}
-                                            `}>
-                                                {order.status}
-                                            </span>
+                                                border-neutral-200
+                                                bg-white
+                                                p-6
+                                                shadow-sm
+                                            "
+                                        >
 
-
-                                            <span className="
-                                                text-lg
-                                                font-bold
-                                            ">
-                                                ₹
-                                                {Number(
-                                                    order.finalAmount
-                                                ).toFixed(2)}
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    {/* CURRENT LOCATION */}
-
-                                    <div className="
-                                        mt-5
-                                        rounded-2xl
-                                        border
-                                        border-neutral-200
-                                        bg-neutral-50
-                                        p-5
-                                    ">
-
-                                        <div className="
-                                            flex
-                                            items-start
-                                            gap-4
-                                        ">
+                                            {/* ORDER HEADER */}
 
                                             <div className="
                                                 flex
-                                                h-10
-                                                w-10
-                                                shrink-0
-                                                items-center
-                                                justify-center
-                                                rounded-xl
-                                                bg-black
-                                                text-white
-                                                text-sm
-                                                font-bold
+                                                flex-col
+                                                gap-5
+                                                sm:flex-row
+                                                sm:items-center
+                                                sm:justify-between
                                             ">
-                                                📍
+
+                                                <div>
+
+                                                    <p className="
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        Order
+                                                    </p>
+
+
+                                                    <h3 className="
+                                                        mt-1
+                                                        text-lg
+                                                        font-bold
+                                                    ">
+                                                        {order.orderName}
+                                                    </h3>
+
+
+                                                    <p className="
+                                                        mt-1
+                                                        break-all
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        #{order.id}
+                                                    </p>
+
+                                                </div>
+
+
+                                                <div className="
+                                                    flex
+                                                    items-center
+                                                    gap-3
+                                                ">
+
+                                                    <span className={`
+                                                        rounded-full
+                                                        border
+                                                        px-3
+                                                        py-1.5
+                                                        text-xs
+                                                        font-semibold
+                                                        ${getStatusStyle(
+                                                            order.status
+                                                        )}
+                                                    `}>
+                                                        {order.status}
+                                                    </span>
+
+
+                                                    <span className="
+                                                        text-lg
+                                                        font-bold
+                                                    ">
+                                                        ₹
+                                                        {Number(
+                                                            order.finalAmount
+                                                        ).toFixed(2)}
+                                                    </span>
+
+                                                </div>
+
                                             </div>
 
 
+                                            {/* CURRENT LOCATION */}
+
                                             <div className="
-                                                min-w-0
+                                                mt-5
+                                                rounded-2xl
+                                                border
+                                                border-neutral-200
+                                                bg-neutral-50
+                                                p-5
                                             ">
 
-                                                <p className="
-                                                    text-xs
-                                                    font-medium
-                                                    text-neutral-400
+                                                <div className="
+                                                    flex
+                                                    items-start
+                                                    gap-4
                                                 ">
-                                                    Current location
-                                                </p>
+
+                                                    <div className="
+                                                        flex
+                                                        h-10
+                                                        w-10
+                                                        shrink-0
+                                                        items-center
+                                                        justify-center
+                                                        rounded-xl
+                                                        bg-black
+                                                        text-white
+                                                        text-sm
+                                                        font-bold
+                                                    ">
+                                                        📍
+                                                    </div>
 
 
-                                                {order.currentCheckpoint ? (
+                                                    <div className="
+                                                        min-w-0
+                                                        flex-1
+                                                    ">
 
-                                                    <>
                                                         <p className="
-                                                            mt-1
-                                                            text-sm
-                                                            font-bold
-                                                            text-black
+                                                            text-xs
+                                                            font-medium
+                                                            text-neutral-400
                                                         ">
-                                                            {
-                                                                order
-                                                                    .currentCheckpoint
-                                                                    .checkpointName
-                                                            }
+                                                            Current location
                                                         </p>
 
 
-                                                        <p className="
-                                                            mt-1
-                                                            text-sm
-                                                            leading-6
-                                                            text-neutral-500
-                                                        ">
-                                                            {
-                                                                order
-                                                                    .currentCheckpoint
-                                                                    .checkpointDetail
-                                                            }
-                                                        </p>
+                                                        {order.currentCheckpoint ? (
 
-                                                    </>
+                                                            <>
 
-                                                ) : (
+                                                                <p className="
+                                                                    mt-1
+                                                                    text-sm
+                                                                    font-bold
+                                                                    text-black
+                                                                ">
+                                                                    {
+                                                                        order
+                                                                            .currentCheckpoint
+                                                                            .checkpointName
+                                                                    }
+                                                                </p>
+
+
+                                                                <p className="
+                                                                    mt-1
+                                                                    text-sm
+                                                                    leading-6
+                                                                    text-neutral-500
+                                                                ">
+                                                                    {
+                                                                        order
+                                                                            .currentCheckpoint
+                                                                            .checkpointDetail
+                                                                    }
+                                                                </p>
+
+
+                                                                <div className="
+                                                                    mt-4
+                                                                    grid
+                                                                    grid-cols-2
+                                                                    gap-3
+                                                                ">
+
+                                                                    <div className="
+                                                                        rounded-xl
+                                                                        bg-white
+                                                                        p-3
+                                                                    ">
+
+                                                                        <p className="
+                                                                            text-[11px]
+                                                                            text-neutral-400
+                                                                        ">
+                                                                            Latitude
+                                                                        </p>
+
+                                                                        <p className="
+                                                                            mt-1
+                                                                            text-xs
+                                                                            font-medium
+                                                                            text-neutral-800
+                                                                        ">
+                                                                            {
+                                                                                order
+                                                                                    .currentCheckpoint
+                                                                                    .latitude
+                                                                            }
+                                                                        </p>
+
+                                                                    </div>
+
+
+                                                                    <div className="
+                                                                        rounded-xl
+                                                                        bg-white
+                                                                        p-3
+                                                                    ">
+
+                                                                        <p className="
+                                                                            text-[11px]
+                                                                            text-neutral-400
+                                                                        ">
+                                                                            Longitude
+                                                                        </p>
+
+                                                                        <p className="
+                                                                            mt-1
+                                                                            text-xs
+                                                                            font-medium
+                                                                            text-neutral-800
+                                                                        ">
+                                                                            {
+                                                                                order
+                                                                                    .currentCheckpoint
+                                                                                    .longitude
+                                                                            }
+                                                                        </p>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </>
+
+                                                        ) : (
+
+                                                            <p className="
+                                                                mt-1
+                                                                text-sm
+                                                                text-neutral-500
+                                                            ">
+                                                                Not dispatched yet
+                                                            </p>
+
+                                                        )}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            {/* ORDER DETAILS */}
+
+                                            <div className="
+                                                mt-5
+                                                grid
+                                                gap-4
+                                                border-t
+                                                border-neutral-100
+                                                pt-5
+                                                sm:grid-cols-3
+                                            ">
+
+                                                <div>
+
+                                                    <p className="
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        Payment
+                                                    </p>
+
 
                                                     <p className="
                                                         mt-1
                                                         text-sm
-                                                        text-neutral-500
+                                                        font-medium
                                                     ">
-                                                        Not dispatched yet
+                                                        {order.paymentMethod}
                                                     </p>
 
-                                                )}
+                                                </div>
+
+
+                                                <div>
+
+                                                    <p className="
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        Payment status
+                                                    </p>
+
+
+                                                    <p className="
+                                                        mt-1
+                                                        text-sm
+                                                        font-medium
+                                                    ">
+                                                        {order.paymentStatus}
+                                                    </p>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <p className="
+                                                        text-xs
+                                                        text-neutral-400
+                                                    ">
+                                                        Ordered
+                                                    </p>
+
+
+                                                    <p className="
+                                                        mt-1
+                                                        text-sm
+                                                        font-medium
+                                                    ">
+                                                        {formatDate(
+                                                            order.createdAt
+                                                        )}
+                                                    </p>
+
+                                                </div>
 
                                             </div>
 
                                         </div>
 
-                                    </div>
+                                    )
+                                )}
 
+                            </div>
 
-                                    {/* ORDER DETAILS */}
-
-                                    <div className="
-                                        mt-5
-                                        grid
-                                        gap-4
-                                        border-t
-                                        border-neutral-100
-                                        pt-5
-                                        sm:grid-cols-3
-                                    ">
-
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Payment
-                                            </p>
-
-
-                                            <p className="
-                                                mt-1
-                                                text-sm
-                                                font-medium
-                                            ">
-                                                {order.paymentMethod}
-                                            </p>
-
-                                        </div>
-
-
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Payment status
-                                            </p>
-
-
-                                            <p className="
-                                                mt-1
-                                                text-sm
-                                                font-medium
-                                            ">
-                                                {order.paymentStatus}
-                                            </p>
-
-                                        </div>
-
-
-                                        <div>
-
-                                            <p className="
-                                                text-xs
-                                                text-neutral-400
-                                            ">
-                                                Ordered
-                                            </p>
-
-
-                                            <p className="
-                                                mt-1
-                                                text-sm
-                                                font-medium
-                                            ">
-                                                {formatDate(
-                                                    order.createdAt
-                                                )}
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            ))}
-
-                        </div>
-                    )}
+                        )}
 
                 </section>
 

@@ -8,11 +8,38 @@ export default function Landing() {
         <div className="min-h-screen bg-[#fafafa]">
 
             {/* Navbar */}
-            <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-                <LogoWithName />
+            <nav className="
+                mx-auto
+                flex
+                max-w-6xl
+                items-center
+                justify-between
+                px-6
+                py-6
+            ">
 
+                {/* Admin access */}
                 <button
-                    onClick={() => navigate("/login")}
+                    onClick={() =>
+                        navigate("/admin/login")
+                    }
+                    className="
+                        rounded-xl
+                        transition
+                        hover:opacity-70
+                    "
+                    aria-label="Admin login"
+                    title="Admin login"
+                >
+                    <LogoWithName />
+                </button>
+
+
+                {/* Customer login */}
+                <button
+                    onClick={() =>
+                        navigate("/login")
+                    }
                     className="
                         rounded-xl
                         px-4
@@ -27,11 +54,23 @@ export default function Landing() {
                 >
                     Login
                 </button>
+
             </nav>
 
 
             {/* Hero */}
-            <main className="mx-auto grid max-w-6xl items-center gap-16 px-6 pb-20 pt-16 lg:grid-cols-2 lg:pt-24">
+            <main className="
+                mx-auto
+                grid
+                max-w-6xl
+                items-center
+                gap-16
+                px-6
+                pb-20
+                pt-16
+                lg:grid-cols-2
+                lg:pt-24
+            ">
 
                 {/* Left side */}
                 <div>
@@ -82,10 +121,18 @@ export default function Landing() {
                     </p>
 
 
-                    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <div className="
+                        mt-8
+                        flex
+                        flex-col
+                        gap-3
+                        sm:flex-row
+                    ">
 
                         <button
-                            onClick={() => navigate("/choose-account")}
+                            onClick={() =>
+                                navigate("/choose-account")
+                            }
                             className="
                                 rounded-xl
                                 bg-black
@@ -101,8 +148,11 @@ export default function Landing() {
                             Get Started
                         </button>
 
+
                         <button
-                            onClick={() => navigate("/login")}
+                            onClick={() =>
+                                navigate("/login")
+                            }
                             className="
                                 rounded-xl
                                 border
@@ -126,7 +176,11 @@ export default function Landing() {
 
 
                 {/* Right side */}
-                <div className="hidden lg:flex lg:justify-end">
+                <div className="
+                    hidden
+                    lg:flex
+                    lg:justify-end
+                ">
 
                     <div className="
                         flex
@@ -137,18 +191,16 @@ export default function Landing() {
                         rounded-[40px]
                         bg-black
                     ">
-                        <span className="
-                            text-[180px]
-                            font-bold
-                            tracking-tighter
-                            text-white
-                        ">
-                            <img 
+
+                        <img
                             src="/pictures/NimbusGO_Full.png"
                             alt="NimbusGO"
-                            className="w-64 object-contain"
-                            />
-                        </span>
+                            className="
+                                w-64
+                                object-contain
+                            "
+                        />
+
                     </div>
 
                 </div>

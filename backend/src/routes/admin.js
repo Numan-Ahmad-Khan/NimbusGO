@@ -62,10 +62,12 @@ router.patch(
   authorization("ADMIN"),
   adminController.addCheckpoint,
 );
-
 router.get(
-  "/admin/test-email",
-  adminController.testEmail,
+    "/admin/checkpoint_list",
+    authentication,
+    authorization("ADMIN"),
+    adminController.getCheckpointList
 );
+
 
 module.exports = router;

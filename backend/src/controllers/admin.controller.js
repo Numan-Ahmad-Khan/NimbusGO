@@ -17,8 +17,8 @@ const getMe = async (req, res) => {
         });
 
         if (!user) {
-            return res.json({
-                msg: "Error not found"
+            return res.status(404).json({
+                msg: "User not found"
             });
         }
 
@@ -26,13 +26,15 @@ const getMe = async (req, res) => {
             user
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
-        res.json({
+
+        return res.status(500).json({
             error: "Server Error"
         });
     }
 };
+
 
 const getOrder = async (req, res) => {
     try {
@@ -42,29 +44,49 @@ const getOrder = async (req, res) => {
             },
             attributes: [
                 "id",
+                "userId",
                 "orderName",
                 "status"
             ]
         });
 
         if (!order) {
-            return res.json({
+            return res.status(404).json({
                 message: "Invalid Order ID"
             });
         }
 
+        // Get user separately — NO Sequelize relation
+        const user = await User.findOne({
+            where: {
+                id: order.userId
+            },
+            attributes: [
+                "name",
+                "email"
+            ]
+        });
+
         return res.json({
             Success: "Order Status",
-            Details: order
+            Details: {
+                id: order.id,
+                orderName: order.orderName,
+                status: order.status,
+                userName: user?.name || "Unknown User",
+                userEmail: user?.email || "Unknown Email"
+            }
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
+
         return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
+
 
 const changeOrderStatus = async (req, res) => {
     try {
@@ -77,7 +99,7 @@ const changeOrderStatus = async (req, res) => {
         });
 
         if (!order) {
-            return res.json({
+            return res.status(404).json({
                 Error: "Order Id invalid"
             });
         }
@@ -94,17 +116,19 @@ const changeOrderStatus = async (req, res) => {
             newStatus: status
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
-        res.status(500).json({
+
+        return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
 
+
 const updateCheckpoint = async (req, res) => {
     try {
-        const { chcekpointId } = req.body;
+        const { checkpointId } = req.body;
 
         const order = await Order.findOne({
             where: {
@@ -113,36 +137,52 @@ const updateCheckpoint = async (req, res) => {
         });
 
         if (!order) {
-            return res.json({
+            return res.status(404).json({
                 Error: "Order Id invalid"
             });
         }
 
-        if (!order.status === "IN_TRANSIT") {
-            return res.json({
-                msg: "Oder not in transit"
+        if (order.status !== "IN_TRANSIT") {
+            return res.status(400).json({
+                msg: "Order not in transit"
             });
         }
 
-        order.transitDetail = chcekpointId;
+        // Make sure checkpoint exists
+        const checkpoint = await Checkpoint.findOne({
+            where: {
+                id: checkpointId
+            }
+        });
+
+        if (!checkpoint) {
+            return res.status(404).json({
+                msg: "Checkpoint not found"
+            });
+        }
+
+        order.transitDetail = checkpointId;
 
         await order.save();
 
         return res.json({
-            msg: "Checkpoint Added"
+            msg: "Checkpoint Added",
+            checkpoint
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
-        res.status(500).json({
+
+        return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
 
+
 const getOrderList = async (req, res) => {
     try {
-        const order = await Order.findAll({
+        const orders = await Order.findAll({
             attributes: [
                 "id",
                 "userId",
@@ -151,17 +191,52 @@ const getOrderList = async (req, res) => {
             ]
         });
 
+        // Get users separately — NO Sequelize relation
+        const users = await User.findAll({
+            attributes: [
+                "id",
+                "name",
+                "email"
+            ]
+        });
+
+        // Create a map:
+        // userId -> user name/email
+        const userMap = new Map();
+
+        users.forEach(user => {
+            userMap.set(user.id, {
+                name: user.name,
+                email: user.email
+            });
+        });
+
+        const orderList = orders.map(order => {
+            const user = userMap.get(order.userId);
+
+            return {
+                id: order.id,
+                orderName: order.orderName,
+                status: order.status,
+
+                userName: user?.name || "Unknown User",
+                userEmail: user?.email || "Unknown Email"
+            };
+        });
+
         return res.json({
-            Details: order
+            Details: orderList
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
+
         return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
+
 
 const getUserList = async (req, res) => {
     try {
@@ -175,23 +250,31 @@ const getUserList = async (req, res) => {
             user_list: users
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
+
         return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
 
+
 const changeRate = async (req, res) => {
     try {
-        const { rateDistance, rateDimensions, rateWeight } = req.body;
+        const {
+            rateDistance,
+            rateDimensions,
+            rateWeight
+        } = req.body;
 
         if (
             rateDistance === undefined ||
             rateDistance === null ||
-            (typeof rateDistance === "object" &&
-                Object.keys(rate).length === 0)
+            (
+                typeof rateDistance === "object" &&
+                Object.keys(rateDistance).length === 0
+            )
         ) {
             return res.status(400).json({
                 Error: "Cannot be empty/undefined"
@@ -201,8 +284,10 @@ const changeRate = async (req, res) => {
         if (
             rateDimensions === undefined ||
             rateDimensions === null ||
-            (typeof rateDimensions === "object" &&
-                Object.keys(rate).length === 0)
+            (
+                typeof rateDimensions === "object" &&
+                Object.keys(rateDimensions).length === 0
+            )
         ) {
             return res.status(400).json({
                 Error: "Cannot be empty/undefined"
@@ -212,8 +297,10 @@ const changeRate = async (req, res) => {
         if (
             rateWeight === undefined ||
             rateWeight === null ||
-            (typeof rateWeight === "object" &&
-                Object.keys(rate).length === 0)
+            (
+                typeof rateWeight === "object" &&
+                Object.keys(rateWeight).length === 0
+            )
         ) {
             return res.status(400).json({
                 Error: "Cannot be empty/undefined"
@@ -222,25 +309,30 @@ const changeRate = async (req, res) => {
 
         await Config.upsert({
             id: "SINGLETON",
+
             rateKeyDistance: "RATE_PER_KM",
             rateValueDistance: rateDistance,
+
             rateKeyDimensions: "RATE_VOLUME",
             rateValueDimensions: rateDimensions,
+
             rateKeyWeight: "RATE_PER_KG",
             rateValueWeight: rateWeight
         });
 
         return res.json({
-            msg: `Success, rates have been updated`
+            msg: "Success, rates have been updated"
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
-        return res.json({
+
+        return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
+
 
 const addCheckpoint = async (req, res) => {
     try {
@@ -263,13 +355,41 @@ const addCheckpoint = async (req, res) => {
             checkpoint
         });
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
-        return res.json({
+
+        return res.status(500).json({
             msg: "Internal server error"
         });
     }
 };
+
+
+const getCheckpointList = async (req, res) => {
+    try {
+        const checkpoints = await Checkpoint.findAll({
+            attributes: [
+                "id",
+                "checkpointName",
+                "checkpointDetail",
+                "longitude",
+                "latitude"
+            ]
+        });
+
+        return res.json({
+            checkpoints
+        });
+    }
+    catch (err) {
+        console.log(err);
+
+        return res.status(500).json({
+            msg: "Internal server error"
+        });
+    }
+};
+
 
 const testEmail = async (req, res) => {
     try {
@@ -277,7 +397,7 @@ const testEmail = async (req, res) => {
             "sabreenafayaz08@gmail.com",
             "001 Backend Test Email",
             `
-                <h2>Email System Working!<br>lalalalluluulululululu</h2>
+                <h2>Email System Working!</h2>
                 <p>This email was sent using Nodemailer.</p>
                 <p>Your 001 backend email system is configured correctly.</p>
             `
@@ -287,13 +407,14 @@ const testEmail = async (req, res) => {
             message: "Test email sent successfully"
         });
     }
-    catch(error) {
+    catch (error) {
         res.status(500).json({
             message: "Failed to send test email",
             error: error.message
         });
     }
 };
+
 
 module.exports = {
     getMe,
@@ -304,5 +425,6 @@ module.exports = {
     getUserList,
     changeRate,
     addCheckpoint,
+    getCheckpointList,
     testEmail
 };

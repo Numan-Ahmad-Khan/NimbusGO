@@ -14,6 +14,9 @@ import RiderSignup from "./pages/rider/RiderSignup";
 import OrderSuccess from "./pages/customer/OrderSuccess";
 import OrderResult from "./pages/customer/OrderResult";
 import PaymentWaiting from "./pages/customer/PaymentWaiting";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 function App() {
     return (
@@ -111,6 +114,19 @@ function App() {
                     <ProtectedRoute>
                         <PaymentWaiting />
                     </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/login"
+                element={<AdminLogin />}
+            />
+                        
+            <Route
+                path="/admin/dashboard"
+                element={
+                    <AdminProtectedRoute>
+                        <AdminDashboard />
+                    </AdminProtectedRoute>
                 }
             />
             </Routes>

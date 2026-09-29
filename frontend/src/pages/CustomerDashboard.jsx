@@ -33,8 +33,7 @@ export default function CustomerDashboard() {
                 data?.orders || []
             );
 
-        }
-        catch (error) {
+        } catch (error) {
 
             console.log(
                 "Failed to load orders:",
@@ -46,8 +45,7 @@ export default function CustomerDashboard() {
                 "Failed to load orders."
             );
 
-        }
-        finally {
+        } finally {
 
             setLoading(false);
 
@@ -787,73 +785,6 @@ export default function CustomerDashboard() {
                                                                             .checkpointDetail
                                                                     }
                                                                 </p>
-
-
-                                                                <div className="
-                                                                    mt-4
-                                                                    grid
-                                                                    grid-cols-2
-                                                                    gap-3
-                                                                ">
-
-                                                                    <div className="
-                                                                        rounded-xl
-                                                                        bg-white
-                                                                        p-3
-                                                                    ">
-
-                                                                        <p className="
-                                                                            text-[11px]
-                                                                            text-neutral-400
-                                                                        ">
-                                                                            Latitude
-                                                                        </p>
-
-                                                                        <p className="
-                                                                            mt-1
-                                                                            text-xs
-                                                                            font-medium
-                                                                            text-neutral-800
-                                                                        ">
-                                                                            {
-                                                                                order
-                                                                                    .currentCheckpoint
-                                                                                    .latitude
-                                                                            }
-                                                                        </p>
-
-                                                                    </div>
-
-
-                                                                    <div className="
-                                                                        rounded-xl
-                                                                        bg-white
-                                                                        p-3
-                                                                    ">
-
-                                                                        <p className="
-                                                                            text-[11px]
-                                                                            text-neutral-400
-                                                                        ">
-                                                                            Longitude
-                                                                        </p>
-
-                                                                        <p className="
-                                                                            mt-1
-                                                                            text-xs
-                                                                            font-medium
-                                                                            text-neutral-800
-                                                                        ">
-                                                                            {
-                                                                                order
-                                                                                    .currentCheckpoint
-                                                                                    .longitude
-                                                                            }
-                                                                        </p>
-
-                                                                    </div>
-
-                                                                </div>
 
                                                             </>
 

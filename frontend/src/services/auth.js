@@ -1,5 +1,5 @@
-// const API_URL = "https://nimbusgo-bck.vercel.app";
-const API_URL = "http://localhost:6600";
+const API_URL = "https://nimbusgo-bck.vercel.app";
+// const API_URL = "http://localhost:6600";
 async function handleResponse(response) {
     const data = await response.json().catch(() => ({}));
 

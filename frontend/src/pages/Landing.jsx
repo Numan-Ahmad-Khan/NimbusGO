@@ -5,9 +5,18 @@ export default function Landing() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-[#fafafa]">
+        <div className="
+            min-h-screen
+            bg-[#fafafa]
+            text-neutral-900
+            transition-colors
+            duration-300
+            dark:bg-slate-950
+            dark:text-white
+        ">
 
             {/* Navbar */}
+
             <nav className="
                 mx-auto
                 flex
@@ -19,6 +28,7 @@ export default function Landing() {
             ">
 
                 {/* Admin access */}
+
                 <button
                     onClick={() =>
                         navigate("/admin/login")
@@ -36,6 +46,7 @@ export default function Landing() {
 
 
                 {/* Customer login */}
+
                 <button
                     onClick={() =>
                         navigate("/login")
@@ -50,6 +61,9 @@ export default function Landing() {
                         transition
                         hover:bg-neutral-100
                         hover:text-black
+                        dark:text-slate-300
+                        dark:hover:bg-slate-800
+                        dark:hover:text-white
                     "
                 >
                     Login
@@ -59,6 +73,7 @@ export default function Landing() {
 
 
             {/* Hero */}
+
             <main className="
                 mx-auto
                 grid
@@ -73,6 +88,7 @@ export default function Landing() {
             ">
 
                 {/* Left side */}
+
                 <div>
 
                     <div className="
@@ -87,6 +103,9 @@ export default function Landing() {
                         text-xs
                         font-medium
                         text-neutral-600
+                        dark:border-slate-800
+                        dark:bg-slate-900
+                        dark:text-slate-300
                     ">
                         From point A to point B at racing broom speeds.
                     </div>
@@ -100,6 +119,7 @@ export default function Landing() {
                         tracking-tight
                         text-black
                         sm:text-6xl
+                        dark:text-white
                     ">
                         Delivered faster
                         <br />
@@ -115,6 +135,7 @@ export default function Landing() {
                         text-base
                         leading-7
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         NimbusGO makes delivery simple,
                         fast and hassle-free.
@@ -143,6 +164,7 @@ export default function Landing() {
                                 text-white
                                 transition
                                 hover:bg-neutral-800
+                                dark:hover:bg-slate-800
                             "
                         >
                             Get Started
@@ -165,6 +187,10 @@ export default function Landing() {
                                 text-black
                                 transition
                                 hover:bg-neutral-50
+                                dark:border-slate-700
+                                dark:bg-slate-900
+                                dark:text-white
+                                dark:hover:bg-slate-800
                             "
                         >
                             Login
@@ -176,6 +202,7 @@ export default function Landing() {
 
 
                 {/* Right side */}
+
                 <div className="
                     hidden
                     lg:flex
@@ -190,6 +217,7 @@ export default function Landing() {
                         justify-center
                         rounded-[40px]
                         bg-black
+                        dark:bg-white
                     ">
 
                         <img

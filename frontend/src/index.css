@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 * {
     box-sizing: border-box;
 }
@@ -10,8 +12,15 @@ body,
     min-height: 100%;
 }
 
+html {
+    transition:
+        background-color 300ms ease,
+        color 300ms ease;
+}
+
 body {
     margin: 0;
+
     font-family:
         Inter,
         ui-sans-serif,
@@ -23,6 +32,15 @@ body {
 
     background: #fafafa;
     color: #111111;
+
+    transition:
+        background-color 300ms ease,
+        color 300ms ease;
+}
+
+.dark body {
+    background: #020617;
+    color: #ffffff;
 }
 
 button,

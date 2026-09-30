@@ -427,35 +427,58 @@ export default function PlaceOrder() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fafafa] px-4 py-8 sm:px-6">
+        <div className="
+            min-h-screen
+            bg-[#fafafa]
+            px-4
+            py-8
+            text-neutral-900
+            transition-colors
+            duration-300
+            sm:px-6
+            dark:bg-slate-950
+            dark:text-white
+        ">
 
             {/* HEADER */}
 
-            <header className="mx-auto max-w-5xl">
+            <header className="
+                mx-auto
+                max-w-5xl
+            ">
 
                 <LogoWithName />
 
                 <div className="mt-10">
 
                     <p className="
-                        text-sm font-medium
+                        text-sm
+                        font-medium
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Create a delivery
                     </p>
 
                     <h1 className="
-                        mt-2 text-3xl
-                        font-bold tracking-tight
-                        text-black sm:text-4xl
+                        mt-2
+                        text-3xl
+                        font-bold
+                        tracking-tight
+                        text-black
+                        dark:text-white
+                        sm:text-4xl
                     ">
                         Send your package
                     </h1>
 
                     <p className="
-                        mt-3 max-w-xl
-                        text-sm leading-6
+                        mt-3
+                        max-w-xl
+                        text-sm
+                        leading-6
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Enter your pickup, drop
                         and package details to
@@ -470,11 +493,14 @@ export default function PlaceOrder() {
             {/* PROGRESS */}
 
             <div className="
-                mx-auto mt-8 max-w-5xl
+                mx-auto
+                mt-8
+                max-w-5xl
             ">
 
                 <div className="
-                    flex items-center
+                    flex
+                    items-center
                 ">
 
                     {[
@@ -492,24 +518,29 @@ export default function PlaceOrder() {
                                 <div
                                     key={number}
                                     className="
-                                        flex flex-1
+                                        flex
+                                        flex-1
                                         items-center
                                     "
                                 >
 
                                     <div className={`
-                                        flex items-center
-                                        gap-2 text-sm
+                                        flex
+                                        items-center
+                                        gap-2
+                                        text-sm
                                         font-medium
                                         ${
                                             step >= itemStep
-                                                ? "text-black"
-                                                : "text-neutral-400"
+                                                ? "text-black dark:text-white"
+                                                : "text-neutral-400 dark:text-slate-600"
                                         }
                                     `}>
 
                                         <span className={`
-                                            flex h-7 w-7
+                                            flex
+                                            h-7
+                                            w-7
                                             shrink-0
                                             items-center
                                             justify-center
@@ -518,15 +549,16 @@ export default function PlaceOrder() {
                                             font-semibold
                                             ${
                                                 step >= itemStep
-                                                    ? "bg-black text-white"
-                                                    : "bg-neutral-200 text-neutral-500"
+                                                    ? "bg-black text-white dark:bg-white dark:text-black"
+                                                    : "bg-neutral-200 text-neutral-500 dark:bg-slate-800 dark:text-slate-400"
                                             }
                                         `}>
                                             {number}
                                         </span>
 
                                         <span className="
-                                            hidden sm:block
+                                            hidden
+                                            sm:block
                                         ">
                                             {label}
                                         </span>
@@ -535,12 +567,13 @@ export default function PlaceOrder() {
 
                                     {index < 3 && (
                                         <div className={`
-                                            mx-3 h-px flex-1
+                                            mx-3
+                                            h-px
+                                            flex-1
                                             ${
-                                                step >
-                                                itemStep
-                                                    ? "bg-black"
-                                                    : "bg-neutral-200"
+                                                step > itemStep
+                                                    ? "bg-black dark:bg-white"
+                                                    : "bg-neutral-200 dark:bg-slate-800"
                                             }
                                         `} />
                                     )}
@@ -558,14 +591,23 @@ export default function PlaceOrder() {
             {/* MAIN */}
 
             <main className="
-                mx-auto mt-6 max-w-5xl
+                mx-auto
+                mt-6
+                max-w-5xl
             ">
 
                 <div className="
                     rounded-3xl
-                    border border-neutral-200
-                    bg-white p-5 shadow-sm
+                    border
+                    border-neutral-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                    transition-colors
+                    duration-300
                     sm:p-8
+                    dark:border-slate-800
+                    dark:bg-slate-900
                 ">
 
 
@@ -576,24 +618,30 @@ export default function PlaceOrder() {
                             <div className="mb-8">
 
                                 <p className="
-                                    text-sm font-medium
+                                    text-sm
+                                    font-medium
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Step 1
                                 </p>
 
                                 <h2 className="
-                                    mt-1 text-2xl
+                                    mt-1
+                                    text-2xl
                                     font-bold
                                     tracking-tight
                                     text-black
+                                    dark:text-white
                                 ">
                                     Pickup Address
                                 </h2>
 
                                 <p className="
-                                    mt-2 text-sm
+                                    mt-2
+                                    text-sm
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Where should we
                                     collect your package?
@@ -602,7 +650,8 @@ export default function PlaceOrder() {
                             </div>
 
                             <div className="
-                                grid gap-8
+                                grid
+                                gap-8
                                 lg:grid-cols-[360px_1fr]
                             ">
 
@@ -612,10 +661,12 @@ export default function PlaceOrder() {
 
                                     <div>
                                         <label className="
-                                            mb-2 block
+                                            mb-2
+                                            block
                                             text-sm
                                             font-medium
                                             text-neutral-700
+                                            dark:text-slate-300
                                         ">
                                             Street address
                                         </label>
@@ -636,24 +687,36 @@ export default function PlaceOrder() {
                                                 )
                                             }
                                             className="
-                                                w-full rounded-xl
+                                                w-full
+                                                rounded-xl
                                                 border
                                                 border-neutral-200
-                                                px-4 py-3
+                                                bg-white
+                                                px-4
+                                                py-3
                                                 text-sm
+                                                text-black
                                                 outline-none
                                                 transition
+                                                placeholder:text-neutral-400
                                                 focus:border-black
+                                                dark:border-slate-700
+                                                dark:bg-slate-950
+                                                dark:text-white
+                                                dark:placeholder:text-slate-600
+                                                dark:focus:border-white
                                             "
                                         />
                                     </div>
 
                                     <div>
                                         <label className="
-                                            mb-2 block
+                                            mb-2
+                                            block
                                             text-sm
                                             font-medium
                                             text-neutral-700
+                                            dark:text-slate-300
                                         ">
                                             Landmark
                                         </label>
@@ -674,24 +737,36 @@ export default function PlaceOrder() {
                                                 )
                                             }
                                             className="
-                                                w-full rounded-xl
+                                                w-full
+                                                rounded-xl
                                                 border
                                                 border-neutral-200
-                                                px-4 py-3
+                                                bg-white
+                                                px-4
+                                                py-3
                                                 text-sm
+                                                text-black
                                                 outline-none
                                                 transition
+                                                placeholder:text-neutral-400
                                                 focus:border-black
+                                                dark:border-slate-700
+                                                dark:bg-slate-950
+                                                dark:text-white
+                                                dark:placeholder:text-slate-600
+                                                dark:focus:border-white
                                             "
                                         />
                                     </div>
 
                                     <div>
                                         <label className="
-                                            mb-2 block
+                                            mb-2
+                                            block
                                             text-sm
                                             font-medium
                                             text-neutral-700
+                                            dark:text-slate-300
                                         ">
                                             Pincode
                                         </label>
@@ -712,14 +787,24 @@ export default function PlaceOrder() {
                                                 )
                                             }
                                             className="
-                                                w-full rounded-xl
+                                                w-full
+                                                rounded-xl
                                                 border
                                                 border-neutral-200
-                                                px-4 py-3
+                                                bg-white
+                                                px-4
+                                                py-3
                                                 text-sm
+                                                text-black
                                                 outline-none
                                                 transition
+                                                placeholder:text-neutral-400
                                                 focus:border-black
+                                                dark:border-slate-700
+                                                dark:bg-slate-950
+                                                dark:text-white
+                                                dark:placeholder:text-slate-600
+                                                dark:focus:border-white
                                             "
                                         />
                                     </div>
@@ -729,9 +814,11 @@ export default function PlaceOrder() {
                                 <div>
 
                                     <p className="
-                                        mb-2 text-sm
+                                        mb-2
+                                        text-sm
                                         font-medium
                                         text-neutral-700
+                                        dark:text-slate-300
                                     ">
                                         Select pickup location
                                     </p>
@@ -745,22 +832,28 @@ export default function PlaceOrder() {
                                     {pickup.latitude !== null &&
                                         pickup.longitude !== null && (
                                             <div className="
-                                                mt-3 rounded-xl
+                                                mt-3
+                                                rounded-xl
                                                 bg-neutral-50
-                                                px-4 py-3
+                                                px-4
+                                                py-3
+                                                dark:bg-slate-800
                                             ">
 
                                                 <p className="
                                                     text-xs
                                                     font-medium
                                                     text-neutral-700
+                                                    dark:text-slate-300
                                                 ">
                                                     Location selected
                                                 </p>
 
                                                 <p className="
-                                                    mt-1 text-xs
+                                                    mt-1
+                                                    text-xs
                                                     text-neutral-500
+                                                    dark:text-slate-400
                                                 ">
                                                     {pickup.latitude.toFixed(6)},{" "}
                                                     {pickup.longitude.toFixed(6)}
@@ -783,24 +876,30 @@ export default function PlaceOrder() {
                             <div className="mb-8">
 
                                 <p className="
-                                    text-sm font-medium
+                                    text-sm
+                                    font-medium
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Step 2
                                 </p>
 
                                 <h2 className="
-                                    mt-1 text-2xl
+                                    mt-1
+                                    text-2xl
                                     font-bold
                                     tracking-tight
                                     text-black
+                                    dark:text-white
                                 ">
                                     Drop Address
                                 </h2>
 
                                 <p className="
-                                    mt-2 text-sm
+                                    mt-2
+                                    text-sm
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Where should we
                                     deliver your package?
@@ -809,7 +908,8 @@ export default function PlaceOrder() {
                             </div>
 
                             <div className="
-                                grid gap-8
+                                grid
+                                gap-8
                                 lg:grid-cols-[360px_1fr]
                             ">
 
@@ -819,10 +919,12 @@ export default function PlaceOrder() {
 
                                     <div>
                                         <label className="
-                                            mb-2 block
+                                            mb-2
+                                            block
                                             text-sm
                                             font-medium
                                             text-neutral-700
+                                            dark:text-slate-300
                                         ">
                                             Street address
                                         </label>
@@ -843,24 +945,36 @@ export default function PlaceOrder() {
                                                 )
                                             }
                                             className="
-                                                w-full rounded-xl
+                                                w-full
+                                                rounded-xl
                                                 border
                                                 border-neutral-200
-                                                px-4 py-3
+                                                bg-white
+                                                px-4
+                                                py-3
                                                 text-sm
+                                                text-black
                                                 outline-none
                                                 transition
+                                                placeholder:text-neutral-400
                                                 focus:border-black
+                                                dark:border-slate-700
+                                                dark:bg-slate-950
+                                                dark:text-white
+                                                dark:placeholder:text-slate-600
+                                                dark:focus:border-white
                                             "
                                         />
                                     </div>
 
                                     <div>
                                         <label className="
-                                            mb-2 block
+                                            mb-2
+                                            block
                                             text-sm
                                             font-medium
                                             text-neutral-700
+                                            dark:text-slate-300
                                         ">
                                             Landmark
                                         </label>
@@ -881,24 +995,36 @@ export default function PlaceOrder() {
                                                 )
                                             }
                                             className="
-                                                w-full rounded-xl
+                                                w-full
+                                                rounded-xl
                                                 border
                                                 border-neutral-200
-                                                px-4 py-3
+                                                bg-white
+                                                px-4
+                                                py-3
                                                 text-sm
+                                                text-black
                                                 outline-none
                                                 transition
+                                                placeholder:text-neutral-400
                                                 focus:border-black
+                                                dark:border-slate-700
+                                                dark:bg-slate-950
+                                                dark:text-white
+                                                dark:placeholder:text-slate-600
+                                                dark:focus:border-white
                                             "
                                         />
                                     </div>
 
                                     <div>
                                         <label className="
-                                            mb-2 block
+                                            mb-2
+                                            block
                                             text-sm
                                             font-medium
                                             text-neutral-700
+                                            dark:text-slate-300
                                         ">
                                             Pincode
                                         </label>
@@ -919,14 +1045,24 @@ export default function PlaceOrder() {
                                                 )
                                             }
                                             className="
-                                                w-full rounded-xl
+                                                w-full
+                                                rounded-xl
                                                 border
                                                 border-neutral-200
-                                                px-4 py-3
+                                                bg-white
+                                                px-4
+                                                py-3
                                                 text-sm
+                                                text-black
                                                 outline-none
                                                 transition
+                                                placeholder:text-neutral-400
                                                 focus:border-black
+                                                dark:border-slate-700
+                                                dark:bg-slate-950
+                                                dark:text-white
+                                                dark:placeholder:text-slate-600
+                                                dark:focus:border-white
                                             "
                                         />
                                     </div>
@@ -936,9 +1072,11 @@ export default function PlaceOrder() {
                                 <div>
 
                                     <p className="
-                                        mb-2 text-sm
+                                        mb-2
+                                        text-sm
                                         font-medium
                                         text-neutral-700
+                                        dark:text-slate-300
                                     ">
                                         Select drop location
                                     </p>
@@ -952,22 +1090,28 @@ export default function PlaceOrder() {
                                     {drop.latitude !== null &&
                                         drop.longitude !== null && (
                                             <div className="
-                                                mt-3 rounded-xl
+                                                mt-3
+                                                rounded-xl
                                                 bg-neutral-50
-                                                px-4 py-3
+                                                px-4
+                                                py-3
+                                                dark:bg-slate-800
                                             ">
 
                                                 <p className="
                                                     text-xs
                                                     font-medium
                                                     text-neutral-700
+                                                    dark:text-slate-300
                                                 ">
                                                     Location selected
                                                 </p>
 
                                                 <p className="
-                                                    mt-1 text-xs
+                                                    mt-1
+                                                    text-xs
                                                     text-neutral-500
+                                                    dark:text-slate-400
                                                 ">
                                                     {drop.latitude.toFixed(6)},{" "}
                                                     {drop.longitude.toFixed(6)}
@@ -990,24 +1134,30 @@ export default function PlaceOrder() {
                             <div className="mb-8">
 
                                 <p className="
-                                    text-sm font-medium
+                                    text-sm
+                                    font-medium
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Step 3
                                 </p>
 
                                 <h2 className="
-                                    mt-1 text-2xl
+                                    mt-1
+                                    text-2xl
                                     font-bold
                                     tracking-tight
                                     text-black
+                                    dark:text-white
                                 ">
                                     Package Details
                                 </h2>
 
                                 <p className="
-                                    mt-2 text-sm
+                                    mt-2
+                                    text-sm
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Tell us a little about
                                     what you're sending.
@@ -1016,17 +1166,20 @@ export default function PlaceOrder() {
                             </div>
 
                             <div className="
-                                mx-auto max-w-3xl
+                                mx-auto
+                                max-w-3xl
                                 space-y-5
                             ">
 
                                 <div>
 
                                     <label className="
-                                        mb-2 block
+                                        mb-2
+                                        block
                                         text-sm
                                         font-medium
                                         text-neutral-700
+                                        dark:text-slate-300
                                     ">
                                         What are you sending?
                                     </label>
@@ -1047,14 +1200,24 @@ export default function PlaceOrder() {
                                             )
                                         }
                                         className="
-                                            w-full rounded-xl
+                                            w-full
+                                            rounded-xl
                                             border
                                             border-neutral-200
-                                            px-4 py-3
+                                            bg-white
+                                            px-4
+                                            py-3
                                             text-sm
+                                            text-black
                                             outline-none
                                             transition
+                                            placeholder:text-neutral-400
                                             focus:border-black
+                                            dark:border-slate-700
+                                            dark:bg-slate-950
+                                            dark:text-white
+                                            dark:placeholder:text-slate-600
+                                            dark:focus:border-white
                                         "
                                     />
 
@@ -1064,10 +1227,12 @@ export default function PlaceOrder() {
                                 <div>
 
                                     <label className="
-                                        mb-2 block
+                                        mb-2
+                                        block
                                         text-sm
                                         font-medium
                                         text-neutral-700
+                                        dark:text-slate-300
                                     ">
                                         Package description
                                     </label>
@@ -1088,15 +1253,25 @@ export default function PlaceOrder() {
                                         }
                                         rows={4}
                                         className="
-                                            w-full resize-none
+                                            w-full
+                                            resize-none
                                             rounded-xl
                                             border
                                             border-neutral-200
-                                            px-4 py-3
+                                            bg-white
+                                            px-4
+                                            py-3
                                             text-sm
+                                            text-black
                                             outline-none
                                             transition
+                                            placeholder:text-neutral-400
                                             focus:border-black
+                                            dark:border-slate-700
+                                            dark:bg-slate-950
+                                            dark:text-white
+                                            dark:placeholder:text-slate-600
+                                            dark:focus:border-white
                                         "
                                     />
 
@@ -1106,17 +1281,21 @@ export default function PlaceOrder() {
                                 <div>
 
                                     <label className="
-                                        mb-3 block
+                                        mb-3
+                                        block
                                         text-sm
                                         font-medium
                                         text-neutral-700
+                                        dark:text-slate-300
                                     ">
                                         Package dimensions
                                     </label>
 
                                     <div className="
-                                        grid grid-cols-2
-                                        gap-4 sm:grid-cols-4
+                                        grid
+                                        grid-cols-2
+                                        gap-4
+                                        sm:grid-cols-4
                                     ">
 
                                         {[
@@ -1182,17 +1361,28 @@ export default function PlaceOrder() {
                                                             rounded-xl
                                                             border
                                                             border-neutral-200
-                                                            px-4 py-3
+                                                            bg-white
+                                                            px-4
+                                                            py-3
                                                             text-sm
+                                                            text-black
                                                             outline-none
                                                             transition
+                                                            placeholder:text-neutral-400
                                                             focus:border-black
+                                                            dark:border-slate-700
+                                                            dark:bg-slate-950
+                                                            dark:text-white
+                                                            dark:placeholder:text-slate-600
+                                                            dark:focus:border-white
                                                         "
                                                     />
 
                                                     <p className="
-                                                        mt-1 text-xs
+                                                        mt-1
+                                                        text-xs
                                                         text-neutral-400
+                                                        dark:text-slate-500
                                                     ">
                                                         {unit}
                                                     </p>
@@ -1209,15 +1399,19 @@ export default function PlaceOrder() {
                                 <div>
 
                                     <label className="
-                                        mb-2 block
+                                        mb-2
+                                        block
                                         text-sm
                                         font-medium
                                         text-neutral-700
+                                        dark:text-slate-300
                                     ">
                                         Coupon
                                         <span className="
-                                            ml-1 font-normal
+                                            ml-1
+                                            font-normal
                                             text-neutral-400
+                                            dark:text-slate-500
                                         ">
                                             (optional)
                                         </span>
@@ -1239,14 +1433,24 @@ export default function PlaceOrder() {
                                             )
                                         }
                                         className="
-                                            w-full rounded-xl
+                                            w-full
+                                            rounded-xl
                                             border
                                             border-neutral-200
-                                            px-4 py-3
+                                            bg-white
+                                            px-4
+                                            py-3
                                             text-sm
+                                            text-black
                                             outline-none
                                             transition
+                                            placeholder:text-neutral-400
                                             focus:border-black
+                                            dark:border-slate-700
+                                            dark:bg-slate-950
+                                            dark:text-white
+                                            dark:placeholder:text-slate-600
+                                            dark:focus:border-white
                                         "
                                     />
 
@@ -1264,24 +1468,30 @@ export default function PlaceOrder() {
                             <div className="mb-8">
 
                                 <p className="
-                                    text-sm font-medium
+                                    text-sm
+                                    font-medium
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Step 4
                                 </p>
 
                                 <h2 className="
-                                    mt-1 text-2xl
+                                    mt-1
+                                    text-2xl
                                     font-bold
                                     tracking-tight
                                     text-black
+                                    dark:text-white
                                 ">
                                     Review & Payment
                                 </h2>
 
                                 <p className="
-                                    mt-2 text-sm
+                                    mt-2
+                                    text-sm
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Review your delivery
                                     charges and choose
@@ -1292,7 +1502,8 @@ export default function PlaceOrder() {
 
 
                             <div className="
-                                grid gap-8
+                                grid
+                                gap-8
                                 lg:grid-cols-2
                             ">
 
@@ -1305,6 +1516,7 @@ export default function PlaceOrder() {
                                         border
                                         border-neutral-200
                                         p-5
+                                        dark:border-slate-700
                                     ">
 
                                         <div className="
@@ -1319,13 +1531,17 @@ export default function PlaceOrder() {
                                                 <p className="
                                                     text-xs
                                                     text-neutral-400
+                                                    dark:text-slate-500
                                                 ">
                                                     Package
                                                 </p>
 
                                                 <h3 className="
-                                                    mt-1 text-lg
+                                                    mt-1
+                                                    text-lg
                                                     font-bold
+                                                    text-black
+                                                    dark:text-white
                                                 ">
                                                     {
                                                         order.orderName
@@ -1337,13 +1553,16 @@ export default function PlaceOrder() {
                                             <div className="
                                                 rounded-xl
                                                 bg-neutral-100
-                                                px-3 py-2
+                                                px-3
+                                                py-2
                                                 text-right
+                                                dark:bg-slate-800
                                             ">
 
                                                 <p className="
                                                     text-[10px]
                                                     text-neutral-400
+                                                    dark:text-slate-500
                                                 ">
                                                     Distance
                                                 </p>
@@ -1351,6 +1570,8 @@ export default function PlaceOrder() {
                                                 <p className="
                                                     text-sm
                                                     font-semibold
+                                                    text-black
+                                                    dark:text-white
                                                 ">
                                                     {
                                                         price.distance
@@ -1364,7 +1585,8 @@ export default function PlaceOrder() {
 
 
                                         <div className="
-                                            mt-5 space-y-3
+                                            mt-5
+                                            space-y-3
                                         ">
 
                                             <div className="
@@ -1374,12 +1596,15 @@ export default function PlaceOrder() {
                                             ">
                                                 <span className="
                                                     text-neutral-500
+                                                    dark:text-slate-400
                                                 ">
                                                     Distance charge
                                                 </span>
 
                                                 <span className="
                                                     font-medium
+                                                    text-black
+                                                    dark:text-white
                                                 ">
                                                     ₹
                                                     {
@@ -1398,12 +1623,15 @@ export default function PlaceOrder() {
                                             ">
                                                 <span className="
                                                     text-neutral-500
+                                                    dark:text-slate-400
                                                 ">
                                                     Weight charge
                                                 </span>
 
                                                 <span className="
                                                     font-medium
+                                                    text-black
+                                                    dark:text-white
                                                 ">
                                                     ₹
                                                     {
@@ -1422,12 +1650,15 @@ export default function PlaceOrder() {
                                             ">
                                                 <span className="
                                                     text-neutral-500
+                                                    dark:text-slate-400
                                                 ">
                                                     Dimension charge
                                                 </span>
 
                                                 <span className="
                                                     font-medium
+                                                    text-black
+                                                    dark:text-white
                                                 ">
                                                     ₹
                                                     {
@@ -1442,8 +1673,10 @@ export default function PlaceOrder() {
 
 
                                         <div className="
-                                            my-5 border-t
+                                            my-5
+                                            border-t
                                             border-neutral-100
+                                            dark:border-slate-800
                                         " />
 
 
@@ -1454,12 +1687,15 @@ export default function PlaceOrder() {
                                         ">
                                             <span className="
                                                 text-neutral-500
+                                                dark:text-slate-400
                                             ">
                                                 Subtotal
                                             </span>
 
                                             <span className="
                                                 font-medium
+                                                text-black
+                                                dark:text-white
                                             ">
                                                 ₹
                                                 {
@@ -1472,12 +1708,14 @@ export default function PlaceOrder() {
 
 
                                         <div className="
-                                            mt-3 flex
+                                            mt-3
+                                            flex
                                             justify-between
                                             text-sm
                                         ">
                                             <span className="
                                                 text-neutral-500
+                                                dark:text-slate-400
                                             ">
                                                 Coupon discount
                                             </span>
@@ -1485,6 +1723,7 @@ export default function PlaceOrder() {
                                             <span className="
                                                 font-medium
                                                 text-green-600
+                                                dark:text-green-400
                                             ">
                                                 - ₹
                                                 {
@@ -1498,8 +1737,10 @@ export default function PlaceOrder() {
 
                                         {price.couponCode && (
                                             <p className="
-                                                mt-2 text-xs
+                                                mt-2
+                                                text-xs
                                                 text-neutral-400
+                                                dark:text-slate-500
                                             ">
                                                 Coupon applied:{" "}
                                                 {
@@ -1510,8 +1751,10 @@ export default function PlaceOrder() {
 
 
                                         <div className="
-                                            my-5 border-t
+                                            my-5
+                                            border-t
                                             border-neutral-200
+                                            dark:border-slate-700
                                         " />
 
 
@@ -1524,6 +1767,8 @@ export default function PlaceOrder() {
                                             <span className="
                                                 text-base
                                                 font-semibold
+                                                text-black
+                                                dark:text-white
                                             ">
                                                 Total
                                             </span>
@@ -1531,6 +1776,8 @@ export default function PlaceOrder() {
                                             <span className="
                                                 text-2xl
                                                 font-bold
+                                                text-black
+                                                dark:text-white
                                             ">
                                                 ₹
                                                 {
@@ -1552,8 +1799,11 @@ export default function PlaceOrder() {
                                 <div>
 
                                     <p className="
-                                        mb-3 text-sm
+                                        mb-3
+                                        text-sm
                                         font-semibold
+                                        text-black
+                                        dark:text-white
                                     ">
                                         Payment method
                                     </p>
@@ -1582,8 +1832,8 @@ export default function PlaceOrder() {
                                                 ${
                                                     paymentMethod ===
                                                     "ONLINE"
-                                                        ? "border-black bg-black text-white"
-                                                        : "border-neutral-200 bg-white hover:border-black"
+                                                        ? "border-black bg-black text-white dark:border-white dark:bg-white dark:text-black"
+                                                        : "border-neutral-200 bg-white text-black hover:border-black dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:border-white"
                                                 }
                                             `}
                                         >
@@ -1595,7 +1845,9 @@ export default function PlaceOrder() {
                                             ">
 
                                                 <div className={`
-                                                    flex h-5 w-5
+                                                    flex
+                                                    h-5
+                                                    w-5
                                                     shrink-0
                                                     items-center
                                                     justify-center
@@ -1604,17 +1856,19 @@ export default function PlaceOrder() {
                                                     ${
                                                         paymentMethod ===
                                                         "ONLINE"
-                                                            ? "border-white"
-                                                            : "border-neutral-300"
+                                                            ? "border-white dark:border-black"
+                                                            : "border-neutral-300 dark:border-slate-600"
                                                     }
                                                 `}>
 
                                                     {paymentMethod ===
                                                         "ONLINE" && (
                                                         <div className="
-                                                            h-2.5 w-2.5
+                                                            h-2.5
+                                                            w-2.5
                                                             rounded-full
                                                             bg-white
+                                                            dark:bg-black
                                                         " />
                                                     )}
 
@@ -1631,12 +1885,13 @@ export default function PlaceOrder() {
                                                     </p>
 
                                                     <p className={`
-                                                        mt-1 text-xs
+                                                        mt-1
+                                                        text-xs
                                                         ${
                                                             paymentMethod ===
                                                             "ONLINE"
-                                                                ? "text-white/60"
-                                                                : "text-neutral-500"
+                                                                ? "text-white/60 dark:text-black/60"
+                                                                : "text-neutral-500 dark:text-slate-400"
                                                         }
                                                     `}>
                                                         Pay securely
@@ -1669,8 +1924,8 @@ export default function PlaceOrder() {
                                                 ${
                                                     paymentMethod ===
                                                     "COD"
-                                                        ? "border-black bg-black text-white"
-                                                        : "border-neutral-200 bg-white hover:border-black"
+                                                        ? "border-black bg-black text-white dark:border-white dark:bg-white dark:text-black"
+                                                        : "border-neutral-200 bg-white text-black hover:border-black dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:border-white"
                                                 }
                                             `}
                                         >
@@ -1682,7 +1937,9 @@ export default function PlaceOrder() {
                                             ">
 
                                                 <div className={`
-                                                    flex h-5 w-5
+                                                    flex
+                                                    h-5
+                                                    w-5
                                                     shrink-0
                                                     items-center
                                                     justify-center
@@ -1691,17 +1948,19 @@ export default function PlaceOrder() {
                                                     ${
                                                         paymentMethod ===
                                                         "COD"
-                                                            ? "border-white"
-                                                            : "border-neutral-300"
+                                                            ? "border-white dark:border-black"
+                                                            : "border-neutral-300 dark:border-slate-600"
                                                     }
                                                 `}>
 
                                                     {paymentMethod ===
                                                         "COD" && (
                                                         <div className="
-                                                            h-2.5 w-2.5
+                                                            h-2.5
+                                                            w-2.5
                                                             rounded-full
                                                             bg-white
+                                                            dark:bg-black
                                                         " />
                                                     )}
 
@@ -1718,12 +1977,13 @@ export default function PlaceOrder() {
                                                     </p>
 
                                                     <p className={`
-                                                        mt-1 text-xs
+                                                        mt-1
+                                                        text-xs
                                                         ${
                                                             paymentMethod ===
                                                             "COD"
-                                                                ? "text-white/60"
-                                                                : "text-neutral-500"
+                                                                ? "text-white/60 dark:text-black/60"
+                                                                : "text-neutral-500 dark:text-slate-400"
                                                         }
                                                     `}>
                                                         Pay when the
@@ -1741,8 +2001,11 @@ export default function PlaceOrder() {
 
 
                                     <div className="
-                                        mt-5 rounded-2xl
-                                        bg-neutral-50 p-5
+                                        mt-5
+                                        rounded-2xl
+                                        bg-neutral-50
+                                        p-5
+                                        dark:bg-slate-800
                                     ">
 
                                         <div className="
@@ -1753,12 +2016,15 @@ export default function PlaceOrder() {
 
                                             <span className="
                                                 text-neutral-500
+                                                dark:text-slate-400
                                             ">
                                                 Amount to pay
                                             </span>
 
                                             <span className="
                                                 font-bold
+                                                text-black
+                                                dark:text-white
                                             ">
                                                 ₹
                                                 {
@@ -1771,8 +2037,10 @@ export default function PlaceOrder() {
                                         </div>
 
                                         <p className="
-                                            mt-2 text-xs
+                                            mt-2
+                                            text-xs
                                             text-neutral-400
+                                            dark:text-slate-500
                                         ">
                                             {paymentMethod ===
                                             "ONLINE"
@@ -1793,10 +2061,18 @@ export default function PlaceOrder() {
 
                     {error && (
                         <div className="
-                            mt-8 rounded-xl
-                            border border-red-200
-                            bg-red-50 px-4 py-3
-                            text-sm text-red-600
+                            mt-8
+                            rounded-xl
+                            border
+                            border-red-200
+                            bg-red-50
+                            px-4
+                            py-3
+                            text-sm
+                            text-red-600
+                            dark:border-red-900
+                            dark:bg-red-950
+                            dark:text-red-400
                         ">
                             {error}
                         </div>
@@ -1806,10 +2082,14 @@ export default function PlaceOrder() {
                     {/* NAVIGATION */}
 
                     <div className="
-                        mt-10 flex
-                        items-center justify-between
-                        border-t border-neutral-100
+                        mt-10
+                        flex
+                        items-center
+                        justify-between
+                        border-t
+                        border-neutral-100
                         pt-6
+                        dark:border-slate-800
                     ">
 
                         {step > 1 ? (
@@ -1824,12 +2104,19 @@ export default function PlaceOrder() {
                                     rounded-xl
                                     border
                                     border-neutral-200
-                                    bg-white px-5 py-3
-                                    text-sm font-medium
+                                    bg-white
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-medium
                                     text-black
                                     transition
                                     hover:bg-neutral-50
                                     disabled:opacity-50
+                                    dark:border-slate-700
+                                    dark:bg-slate-900
+                                    dark:text-white
+                                    dark:hover:bg-slate-800
                                 "
                             >
                                 ← Back
@@ -1846,13 +2133,19 @@ export default function PlaceOrder() {
                                 disabled={loading}
                                 className="
                                     rounded-xl
-                                    bg-black px-6 py-3
-                                    text-sm font-semibold
+                                    bg-black
+                                    px-6
+                                    py-3
+                                    text-sm
+                                    font-semibold
                                     text-white
                                     transition
                                     hover:bg-neutral-800
                                     disabled:cursor-not-allowed
                                     disabled:opacity-50
+                                    dark:bg-white
+                                    dark:text-black
+                                    dark:hover:bg-slate-200
                                 "
                             >
                                 Continue →
@@ -1867,13 +2160,19 @@ export default function PlaceOrder() {
                                 disabled={priceLoading}
                                 className="
                                     rounded-xl
-                                    bg-black px-6 py-3
-                                    text-sm font-semibold
+                                    bg-black
+                                    px-6
+                                    py-3
+                                    text-sm
+                                    font-semibold
                                     text-white
                                     transition
                                     hover:bg-neutral-800
                                     disabled:cursor-not-allowed
                                     disabled:opacity-50
+                                    dark:bg-white
+                                    dark:text-black
+                                    dark:hover:bg-slate-200
                                 "
                             >
                                 {priceLoading
@@ -1890,13 +2189,19 @@ export default function PlaceOrder() {
                                 disabled={loading}
                                 className="
                                     rounded-xl
-                                    bg-black px-6 py-3
-                                    text-sm font-semibold
+                                    bg-black
+                                    px-6
+                                    py-3
+                                    text-sm
+                                    font-semibold
                                     text-white
                                     transition
                                     hover:bg-neutral-800
                                     disabled:cursor-not-allowed
                                     disabled:opacity-50
+                                    dark:bg-white
+                                    dark:text-black
+                                    dark:hover:bg-slate-200
                                 "
                             >
                                 {loading

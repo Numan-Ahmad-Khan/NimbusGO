@@ -49,10 +49,24 @@ export default function Signup() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fafafa]">
+        <div className="
+            min-h-screen
+            bg-[#fafafa]
+            text-neutral-900
+            transition-colors
+            duration-300
+            dark:bg-slate-950
+            dark:text-white
+        ">
 
             {/* Back */}
-            <div className="mx-auto max-w-6xl px-6 py-6">
+
+            <div className="
+                mx-auto
+                max-w-6xl
+                px-6
+                py-6
+            ">
 
                 <button
                     onClick={() => navigate("/choose-account")}
@@ -62,6 +76,8 @@ export default function Signup() {
                         text-neutral-500
                         transition
                         hover:text-black
+                        dark:text-slate-400
+                        dark:hover:text-white
                     "
                 >
                     ← Back
@@ -69,7 +85,9 @@ export default function Signup() {
 
             </div>
 
+
             {/* Form */}
+
             <main className="
                 flex
                 min-h-[calc(100vh-100px)]
@@ -79,10 +97,16 @@ export default function Signup() {
                 pb-16
             ">
 
-                <div className="w-full max-w-md">
+                <div className="
+                    w-full
+                    max-w-md
+                ">
 
                     {/* Heading */}
-                    <div className="text-center">
+
+                    <div className="
+                        text-center
+                    ">
 
                         <div className="
                             mx-auto
@@ -96,30 +120,39 @@ export default function Signup() {
                             text-lg
                             font-bold
                             text-white
+                            dark:bg-white
+                            dark:text-black
                         ">
                             N
                         </div>
+
 
                         <h1 className="
                             mt-6
                             text-3xl
                             font-bold
                             tracking-tight
+                            text-black
+                            dark:text-white
                         ">
                             Create your account
                         </h1>
+
 
                         <p className="
                             mt-2
                             text-sm
                             text-neutral-500
+                            dark:text-slate-400
                         ">
                             Start sending with NimbusGO.
                         </p>
 
                     </div>
 
+
                     {/* Form card */}
+
                     <div className="
                         mt-8
                         rounded-3xl
@@ -128,6 +161,10 @@ export default function Signup() {
                         bg-white
                         p-7
                         shadow-sm
+                        transition-colors
+                        duration-300
+                        dark:border-slate-800
+                        dark:bg-slate-900
                     ">
 
                         <form
@@ -144,6 +181,7 @@ export default function Signup() {
                                 placeholder="Your name"
                             />
 
+
                             <AuthInput
                                 label="Email"
                                 type="email"
@@ -153,6 +191,7 @@ export default function Signup() {
                                 }
                                 placeholder="you@example.com"
                             />
+
 
                             <AuthInput
                                 label="Password"
@@ -164,7 +203,9 @@ export default function Signup() {
                                 placeholder="Create a password"
                             />
 
+
                             {/* Error */}
+
                             {error && (
                                 <div className="
                                     rounded-xl
@@ -175,12 +216,17 @@ export default function Signup() {
                                     py-3
                                     text-sm
                                     text-red-600
+                                    dark:border-red-900/60
+                                    dark:bg-red-950/40
+                                    dark:text-red-400
                                 ">
                                     {error}
                                 </div>
                             )}
 
+
                             {/* Success */}
+
                             {success && (
                                 <div className="
                                     rounded-xl
@@ -191,10 +237,14 @@ export default function Signup() {
                                     py-3
                                     text-sm
                                     text-green-700
+                                    dark:border-green-900/60
+                                    dark:bg-green-950/40
+                                    dark:text-green-400
                                 ">
                                     {success}
                                 </div>
                             )}
+
 
                             <Button
                                 type="submit"
@@ -206,18 +256,26 @@ export default function Signup() {
 
                         </form>
 
+
                         {/* Login */}
+
                         <div className="
                             mt-6
                             border-t
                             border-neutral-100
                             pt-6
                             text-center
+                            dark:border-slate-800
                         ">
 
-                            <p className="text-sm text-neutral-500">
+                            <p className="
+                                text-sm
+                                text-neutral-500
+                                dark:text-slate-400
+                            ">
                                 Already have an account?
                             </p>
+
 
                             <button
                                 onClick={() => navigate("/login")}
@@ -227,6 +285,7 @@ export default function Signup() {
                                     font-semibold
                                     text-black
                                     hover:underline
+                                    dark:text-white
                                 "
                             >
                                 Login

@@ -11,11 +11,25 @@ export default function OrderResult() {
     const isSuccess = status === "success";
 
     return (
-        <div className="min-h-screen bg-[#fafafa] px-4 py-8 sm:px-6">
+        <div className="
+            min-h-screen
+            bg-[#fafafa]
+            px-4
+            py-8
+            text-neutral-900
+            transition-colors
+            duration-300
+            sm:px-6
+            dark:bg-slate-950
+            dark:text-white
+        ">
 
             {/* HEADER */}
 
-            <header className="mx-auto max-w-5xl">
+            <header className="
+                mx-auto
+                max-w-5xl
+            ">
                 <LogoWithName />
             </header>
 
@@ -23,37 +37,61 @@ export default function OrderResult() {
             {/* RESULT */}
 
             <main className="
-                flex min-h-[80vh]
-                items-center justify-center
+                flex
+                min-h-[80vh]
+                items-center
+                justify-center
             ">
 
                 <div className="
-                    w-full max-w-lg
+                    w-full
+                    max-w-lg
                     rounded-3xl
-                    border border-neutral-200
+                    border
+                    border-neutral-200
                     bg-white
                     p-8
                     text-center
                     shadow-sm
+                    transition-colors
+                    duration-300
                     sm:p-10
+                    dark:border-slate-800
+                    dark:bg-slate-900
                 ">
 
                     {/* ICON */}
 
                     <div className={`
-                        mx-auto flex h-16 w-16
-                        items-center justify-center
+                        mx-auto
+                        flex
+                        h-16
+                        w-16
+                        items-center
+                        justify-center
                         rounded-full
+
                         ${
                             isSuccess
-                                ? "bg-green-100"
-                                : "bg-red-100"
+                                ? `
+                                    bg-green-100
+                                    dark:bg-green-950
+                                `
+                                : `
+                                    bg-red-100
+                                    dark:bg-red-950
+                                `
                         }
                     `}>
 
                         {isSuccess ? (
                             <svg
-                                className="h-8 w-8 text-green-600"
+                                className="
+                                    h-8
+                                    w-8
+                                    text-green-600
+                                    dark:text-green-400
+                                "
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -65,7 +103,12 @@ export default function OrderResult() {
                             </svg>
                         ) : (
                             <svg
-                                className="h-8 w-8 text-red-600"
+                                className="
+                                    h-8
+                                    w-8
+                                    text-red-600
+                                    dark:text-red-400
+                                "
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -84,9 +127,12 @@ export default function OrderResult() {
                     {/* TITLE */}
 
                     <h1 className="
-                        mt-6 text-3xl
-                        font-bold tracking-tight
+                        mt-6
+                        text-3xl
+                        font-bold
+                        tracking-tight
                         text-black
+                        dark:text-white
                     ">
                         {isSuccess
                             ? "Order Placed"
@@ -97,10 +143,13 @@ export default function OrderResult() {
                     {/* MESSAGE */}
 
                     <p className="
-                        mx-auto mt-3
+                        mx-auto
+                        mt-3
                         max-w-sm
-                        text-sm leading-6
+                        text-sm
+                        leading-6
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         {isSuccess
                             ? "Your order has been placed successfully. You can track your delivery from your dashboard."
@@ -112,14 +161,20 @@ export default function OrderResult() {
 
                     {orderId && (
                         <div className="
-                            mt-6 rounded-2xl
+                            mt-6
+                            rounded-2xl
                             bg-neutral-50
-                            px-5 py-4
+                            px-5
+                            py-4
+                            transition-colors
+                            duration-300
+                            dark:bg-slate-800
                         ">
 
                             <p className="
                                 text-xs
                                 text-neutral-400
+                                dark:text-slate-500
                             ">
                                 Order ID
                             </p>
@@ -130,6 +185,7 @@ export default function OrderResult() {
                                 text-sm
                                 font-semibold
                                 text-black
+                                dark:text-white
                             ">
                                 {orderId}
                             </p>
@@ -148,15 +204,20 @@ export default function OrderResult() {
                             )
                         }
                         className="
-                            mt-8 w-full
+                            mt-8
+                            w-full
                             rounded-xl
                             bg-black
-                            px-6 py-3
+                            px-6
+                            py-3
                             text-sm
                             font-semibold
                             text-white
                             transition
                             hover:bg-neutral-800
+                            dark:bg-white
+                            dark:text-black
+                            dark:hover:bg-slate-200
                         "
                     >
                         Back to Dashboard

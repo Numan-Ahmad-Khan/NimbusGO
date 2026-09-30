@@ -100,6 +100,9 @@ export default function CustomerDashboard() {
                 bg-green-50
                 text-green-700
                 border-green-200
+                dark:bg-green-950
+                dark:text-green-300
+                dark:border-green-900
             `;
 
         }
@@ -114,6 +117,9 @@ export default function CustomerDashboard() {
                 bg-red-50
                 text-red-700
                 border-red-200
+                dark:bg-red-950
+                dark:text-red-300
+                dark:border-red-900
             `;
 
         }
@@ -125,6 +131,9 @@ export default function CustomerDashboard() {
                 bg-blue-50
                 text-blue-700
                 border-blue-200
+                dark:bg-blue-950
+                dark:text-blue-300
+                dark:border-blue-900
             `;
 
         }
@@ -134,6 +143,9 @@ export default function CustomerDashboard() {
             bg-neutral-100
             text-neutral-700
             border-neutral-200
+            dark:bg-slate-800
+            dark:text-slate-300
+            dark:border-slate-700
         `;
     }
 
@@ -143,6 +155,11 @@ export default function CustomerDashboard() {
         <div className="
             min-h-screen
             bg-[#fafafa]
+            text-neutral-900
+            transition-colors
+            duration-300
+            dark:bg-slate-950
+            dark:text-white
         ">
 
             {/* NAVBAR */}
@@ -151,6 +168,10 @@ export default function CustomerDashboard() {
                 border-b
                 border-neutral-200
                 bg-white
+                transition-colors
+                duration-300
+                dark:border-slate-800
+                dark:bg-slate-900
             ">
 
                 <div className="
@@ -169,7 +190,7 @@ export default function CustomerDashboard() {
                     <div className="
                         flex
                         items-center
-                        gap-4
+                        gap-3
                     ">
 
                         <span className="
@@ -177,28 +198,69 @@ export default function CustomerDashboard() {
                             text-sm
                             text-neutral-500
                             sm:block
+                            dark:text-slate-400
                         ">
                             Customer
                         </span>
 
 
+                        {/* SETTINGS */}
+
                         <button
-                            onClick={handleLogout}
+                            onClick={() =>
+                                navigate(
+                                    "/customer/settings"
+                                )
+                            }
+                            title="Settings"
+                            aria-label="Settings"
                             className="
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
                                 rounded-xl
                                 border
                                 border-neutral-200
                                 bg-white
-                                px-4
-                                py-2
-                                text-sm
-                                font-medium
-                                text-black
+                                text-lg
                                 transition
                                 hover:bg-neutral-50
+                                dark:border-slate-700
+                                dark:bg-slate-900
+                                dark:hover:bg-slate-800
                             "
                         >
-                            Logout
+                            ⚙️
+                        </button>
+
+
+                        {/* LOGOUT */}
+
+                        <button
+                            onClick={handleLogout}
+                            title="Logout"
+                            aria-label="Logout"
+                            className="
+                                flex
+                                h-10
+                                w-10
+                                items-center
+                                justify-center
+                                rounded-xl
+                                border
+                                border-neutral-200
+                                bg-white
+                                text-lg
+                                transition
+                                hover:bg-neutral-50
+                                dark:border-slate-700
+                                dark:bg-slate-900
+                                dark:hover:bg-slate-800
+                            "
+                        >
+                            ↪
                         </button>
 
                     </div>
@@ -227,6 +289,7 @@ export default function CustomerDashboard() {
                         text-sm
                         font-medium
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Customer Dashboard
                     </p>
@@ -239,6 +302,7 @@ export default function CustomerDashboard() {
                         tracking-tight
                         text-black
                         sm:text-5xl
+                        dark:text-white
                     ">
                         What would you like to do?
                     </h1>
@@ -250,6 +314,7 @@ export default function CustomerDashboard() {
                         text-base
                         leading-7
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Send packages quickly and keep
                         track of your deliveries from
@@ -288,6 +353,10 @@ export default function CustomerDashboard() {
                             text-white
                             transition
                             hover:bg-neutral-800
+                            dark:border-slate-700
+                            dark:bg-white
+                            dark:text-black
+                            dark:hover:bg-slate-200
                         "
                     >
 
@@ -302,6 +371,8 @@ export default function CustomerDashboard() {
                             text-lg
                             font-bold
                             text-black
+                            dark:bg-black
+                            dark:text-white
                         ">
                             →
                         </div>
@@ -323,6 +394,7 @@ export default function CustomerDashboard() {
                             text-sm
                             leading-6
                             text-neutral-300
+                            dark:text-neutral-600
                         ">
                             Create a new delivery, add
                             pickup and drop locations,
@@ -361,6 +433,9 @@ export default function CustomerDashboard() {
                             text-left
                             transition
                             hover:border-neutral-300
+                            dark:border-slate-800
+                            dark:bg-slate-900
+                            dark:hover:border-slate-700
                         "
                     >
 
@@ -375,6 +450,8 @@ export default function CustomerDashboard() {
                             text-lg
                             font-bold
                             text-white
+                            dark:bg-white
+                            dark:text-black
                         ">
                             ≡
                         </div>
@@ -396,6 +473,7 @@ export default function CustomerDashboard() {
                             text-sm
                             leading-6
                             text-neutral-500
+                            dark:text-slate-400
                         ">
                             View your previous deliveries,
                             payment status, and current
@@ -408,6 +486,7 @@ export default function CustomerDashboard() {
                             text-sm
                             font-semibold
                             text-black
+                            dark:text-white
                         ">
                             View orders →
                         </div>
@@ -445,6 +524,7 @@ export default function CustomerDashboard() {
                                 mt-1
                                 text-sm
                                 text-neutral-500
+                                dark:text-slate-400
                             ">
                                 Your latest deliveries.
                             </p>
@@ -461,6 +541,7 @@ export default function CustomerDashboard() {
                                 text-black
                                 hover:underline
                                 disabled:opacity-50
+                                dark:text-white
                             "
                         >
                             {loading
@@ -485,6 +566,9 @@ export default function CustomerDashboard() {
                             py-4
                             text-sm
                             text-red-600
+                            dark:border-red-900
+                            dark:bg-red-950
+                            dark:text-red-300
                         ">
                             {error}
                         </div>
@@ -505,11 +589,14 @@ export default function CustomerDashboard() {
                             px-6
                             py-14
                             text-center
+                            dark:border-slate-800
+                            dark:bg-slate-900
                         ">
 
                             <p className="
                                 text-sm
                                 text-neutral-500
+                                dark:text-slate-400
                             ">
                                 Loading your orders...
                             </p>
@@ -535,6 +622,8 @@ export default function CustomerDashboard() {
                                 px-6
                                 py-14
                                 text-center
+                                dark:border-slate-700
+                                dark:bg-slate-900
                             ">
 
                                 <div className="
@@ -548,6 +637,7 @@ export default function CustomerDashboard() {
                                     bg-neutral-100
                                     text-lg
                                     font-bold
+                                    dark:bg-slate-800
                                 ">
                                     —
                                 </div>
@@ -569,6 +659,7 @@ export default function CustomerDashboard() {
                                     text-sm
                                     leading-6
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Once you create a delivery,
                                     your recent orders will
@@ -593,6 +684,9 @@ export default function CustomerDashboard() {
                                         text-white
                                         transition
                                         hover:bg-neutral-800
+                                        dark:bg-white
+                                        dark:text-black
+                                        dark:hover:bg-slate-200
                                     "
                                 >
                                     Create your first order
@@ -626,6 +720,8 @@ export default function CustomerDashboard() {
                                                 bg-white
                                                 p-6
                                                 shadow-sm
+                                                dark:border-slate-800
+                                                dark:bg-slate-900
                                             "
                                         >
 
@@ -645,6 +741,7 @@ export default function CustomerDashboard() {
                                                     <p className="
                                                         text-xs
                                                         text-neutral-400
+                                                        dark:text-slate-500
                                                     ">
                                                         Order
                                                     </p>
@@ -664,6 +761,7 @@ export default function CustomerDashboard() {
                                                         break-all
                                                         text-xs
                                                         text-neutral-400
+                                                        dark:text-slate-500
                                                     ">
                                                         #{order.id}
                                                     </p>
@@ -716,6 +814,8 @@ export default function CustomerDashboard() {
                                                 border-neutral-200
                                                 bg-neutral-50
                                                 p-5
+                                                dark:border-slate-700
+                                                dark:bg-slate-800
                                             ">
 
                                                 <div className="
@@ -736,6 +836,8 @@ export default function CustomerDashboard() {
                                                         text-white
                                                         text-sm
                                                         font-bold
+                                                        dark:bg-white
+                                                        dark:text-black
                                                     ">
                                                         📍
                                                     </div>
@@ -750,6 +852,7 @@ export default function CustomerDashboard() {
                                                             text-xs
                                                             font-medium
                                                             text-neutral-400
+                                                            dark:text-slate-500
                                                         ">
                                                             Current location
                                                         </p>
@@ -764,6 +867,7 @@ export default function CustomerDashboard() {
                                                                     text-sm
                                                                     font-bold
                                                                     text-black
+                                                                    dark:text-white
                                                                 ">
                                                                     {
                                                                         order
@@ -778,6 +882,7 @@ export default function CustomerDashboard() {
                                                                     text-sm
                                                                     leading-6
                                                                     text-neutral-500
+                                                                    dark:text-slate-400
                                                                 ">
                                                                     {
                                                                         order
@@ -794,6 +899,7 @@ export default function CustomerDashboard() {
                                                                 mt-1
                                                                 text-sm
                                                                 text-neutral-500
+                                                                dark:text-slate-400
                                                             ">
                                                                 Not dispatched yet
                                                             </p>
@@ -817,6 +923,7 @@ export default function CustomerDashboard() {
                                                 border-neutral-100
                                                 pt-5
                                                 sm:grid-cols-3
+                                                dark:border-slate-800
                                             ">
 
                                                 <div>
@@ -824,6 +931,7 @@ export default function CustomerDashboard() {
                                                     <p className="
                                                         text-xs
                                                         text-neutral-400
+                                                        dark:text-slate-500
                                                     ">
                                                         Payment
                                                     </p>
@@ -845,6 +953,7 @@ export default function CustomerDashboard() {
                                                     <p className="
                                                         text-xs
                                                         text-neutral-400
+                                                        dark:text-slate-500
                                                     ">
                                                         Payment status
                                                     </p>
@@ -866,6 +975,7 @@ export default function CustomerDashboard() {
                                                     <p className="
                                                         text-xs
                                                         text-neutral-400
+                                                        dark:text-slate-500
                                                     ">
                                                         Ordered
                                                     </p>

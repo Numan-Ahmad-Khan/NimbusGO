@@ -86,11 +86,25 @@ export default function PaymentWaiting() {
     }, [orderId, navigate]);
 
     return (
-        <div className="min-h-screen bg-[#fafafa] px-4 py-8 sm:px-6">
+        <div className="
+            min-h-screen
+            bg-[#fafafa]
+            px-4
+            py-8
+            text-neutral-900
+            transition-colors
+            duration-300
+            sm:px-6
+            dark:bg-slate-950
+            dark:text-white
+        ">
 
             {/* HEADER */}
 
-            <header className="mx-auto max-w-5xl">
+            <header className="
+                mx-auto
+                max-w-5xl
+            ">
                 <LogoWithName />
             </header>
 
@@ -98,37 +112,55 @@ export default function PaymentWaiting() {
             {/* WAITING CARD */}
 
             <main className="
-                flex min-h-[80vh]
-                items-center justify-center
+                flex
+                min-h-[80vh]
+                items-center
+                justify-center
             ">
 
                 <div className="
-                    w-full max-w-lg
+                    w-full
+                    max-w-lg
                     rounded-3xl
-                    border border-neutral-200
+                    border
+                    border-neutral-200
                     bg-white
                     p-8
                     text-center
                     shadow-sm
+                    transition-colors
+                    duration-300
                     sm:p-10
+                    dark:border-slate-800
+                    dark:bg-slate-900
                 ">
 
                     {/* LOADING ICON */}
 
                     <div className="
-                        mx-auto flex h-16 w-16
-                        items-center justify-center
+                        mx-auto
+                        flex
+                        h-16
+                        w-16
+                        items-center
+                        justify-center
                         rounded-full
                         bg-neutral-100
+                        transition-colors
+                        duration-300
+                        dark:bg-slate-800
                     ">
 
                         <div className="
-                            h-8 w-8
+                            h-8
+                            w-8
                             animate-spin
                             rounded-full
                             border-4
                             border-neutral-200
                             border-t-black
+                            dark:border-slate-700
+                            dark:border-t-white
                         " />
 
                     </div>
@@ -142,6 +174,7 @@ export default function PaymentWaiting() {
                         font-bold
                         tracking-tight
                         text-black
+                        dark:text-white
                     ">
                         Waiting for Payment
                     </h1>
@@ -150,11 +183,13 @@ export default function PaymentWaiting() {
                     {/* MESSAGE */}
 
                     <p className="
-                        mx-auto mt-3
+                        mx-auto
+                        mt-3
                         max-w-sm
                         text-sm
                         leading-6
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Complete your payment in the Razorpay window.
                         We are waiting for confirmation.
@@ -168,12 +203,17 @@ export default function PaymentWaiting() {
                             mt-6
                             rounded-2xl
                             bg-neutral-50
-                            px-5 py-4
+                            px-5
+                            py-4
+                            transition-colors
+                            duration-300
+                            dark:bg-slate-800
                         ">
 
                             <p className="
                                 text-xs
                                 text-neutral-400
+                                dark:text-slate-500
                             ">
                                 Order ID
                             </p>
@@ -184,6 +224,7 @@ export default function PaymentWaiting() {
                                 text-sm
                                 font-semibold
                                 text-black
+                                dark:text-white
                             ">
                                 {orderId}
                             </p>
@@ -198,11 +239,18 @@ export default function PaymentWaiting() {
                         <div className="
                             mt-5
                             rounded-xl
-                            border border-red-200
+                            border
+                            border-red-200
                             bg-red-50
-                            px-4 py-3
+                            px-4
+                            py-3
                             text-sm
                             text-red-600
+                            transition-colors
+                            duration-300
+                            dark:border-red-900
+                            dark:bg-red-950
+                            dark:text-red-400
                         ">
                             {error}
                         </div>
@@ -216,6 +264,7 @@ export default function PaymentWaiting() {
                         text-xs
                         leading-5
                         text-neutral-400
+                        dark:text-slate-500
                     ">
                         Please do not close this page while your
                         payment is being processed.
@@ -232,16 +281,23 @@ export default function PaymentWaiting() {
                             )
                         }
                         className="
-                            mt-8 w-full
+                            mt-8
+                            w-full
                             rounded-xl
-                            border border-neutral-200
+                            border
+                            border-neutral-200
                             bg-white
-                            px-6 py-3
+                            px-6
+                            py-3
                             text-sm
                             font-semibold
                             text-black
                             transition
                             hover:bg-neutral-50
+                            dark:border-slate-700
+                            dark:bg-slate-900
+                            dark:text-white
+                            dark:hover:bg-slate-800
                         "
                     >
                         Back to Dashboard

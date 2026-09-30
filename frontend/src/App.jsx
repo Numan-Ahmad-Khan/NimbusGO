@@ -16,6 +16,7 @@ import OrderResult from "./pages/customer/OrderResult";
 import PaymentWaiting from "./pages/customer/PaymentWaiting";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import CustomerSettings from "./pages/customer/CustomerSettings";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 function App() {
@@ -127,6 +128,14 @@ function App() {
                     <AdminProtectedRoute>
                         <AdminDashboard />
                     </AdminProtectedRoute>
+                }
+            />
+            <Route
+                path="/customer/settings"
+                element={
+                    <ProtectedRoute>
+                        <CustomerSettings />
+                    </ProtectedRoute>
                 }
             />
             </Routes>

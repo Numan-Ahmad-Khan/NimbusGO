@@ -7,16 +7,20 @@ export default function OrderSuccess() {
 
     const order = location.state?.order;
 
-
     if (!order) {
         return (
             <div className="
                 min-h-screen
-                bg-[#fafafa]
                 flex
                 items-center
                 justify-center
+                bg-[#fafafa]
                 px-6
+                text-neutral-900
+                transition-colors
+                duration-300
+                dark:bg-slate-950
+                dark:text-white
             ">
 
                 <div className="
@@ -29,6 +33,10 @@ export default function OrderSuccess() {
                     p-8
                     text-center
                     shadow-sm
+                    transition-colors
+                    duration-300
+                    dark:border-slate-800
+                    dark:bg-slate-900
                 ">
 
                     <LogoWithName />
@@ -38,6 +46,7 @@ export default function OrderSuccess() {
                         text-2xl
                         font-bold
                         text-black
+                        dark:text-white
                     ">
                         Order information unavailable
                     </h1>
@@ -47,6 +56,7 @@ export default function OrderSuccess() {
                         text-sm
                         leading-6
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Your order may still have been
                         created. You can check your
@@ -74,6 +84,9 @@ export default function OrderSuccess() {
                             text-white
                             transition
                             hover:bg-neutral-800
+                            dark:bg-white
+                            dark:text-black
+                            dark:hover:bg-slate-200
                         "
                     >
                         Back to Dashboard
@@ -85,13 +98,17 @@ export default function OrderSuccess() {
         );
     }
 
-
     return (
         <div className="
             min-h-screen
             bg-[#fafafa]
             px-6
             py-8
+            text-neutral-900
+            transition-colors
+            duration-300
+            dark:bg-slate-950
+            dark:text-white
         ">
 
             <main className="
@@ -112,7 +129,11 @@ export default function OrderSuccess() {
                     p-8
                     text-center
                     shadow-sm
+                    transition-colors
+                    duration-300
                     sm:p-10
+                    dark:border-slate-800
+                    dark:bg-slate-900
                 ">
 
                     <LogoWithName />
@@ -133,6 +154,10 @@ export default function OrderSuccess() {
                         text-2xl
                         font-bold
                         text-white
+                        transition-colors
+                        duration-300
+                        dark:bg-white
+                        dark:text-black
                     ">
                         ✓
                     </div>
@@ -143,6 +168,7 @@ export default function OrderSuccess() {
                         text-sm
                         font-medium
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Order placed successfully
                     </p>
@@ -154,6 +180,7 @@ export default function OrderSuccess() {
                         font-bold
                         tracking-tight
                         text-black
+                        dark:text-white
                     ">
                         Your delivery is being processed
                     </h1>
@@ -166,6 +193,7 @@ export default function OrderSuccess() {
                         text-sm
                         leading-6
                         text-neutral-500
+                        dark:text-slate-400
                     ">
                         Your order has been created and
                         is currently being processed.
@@ -180,6 +208,9 @@ export default function OrderSuccess() {
                         bg-neutral-50
                         p-5
                         text-left
+                        transition-colors
+                        duration-300
+                        dark:bg-slate-800
                     ">
 
                         <div className="
@@ -194,6 +225,7 @@ export default function OrderSuccess() {
                                 <p className="
                                     text-xs
                                     text-neutral-400
+                                    dark:text-slate-500
                                 ">
                                     Order
                                 </p>
@@ -204,6 +236,7 @@ export default function OrderSuccess() {
                                     text-sm
                                     font-semibold
                                     text-black
+                                    dark:text-white
                                 ">
                                     #{order.orderId}
                                 </p>
@@ -219,6 +252,8 @@ export default function OrderSuccess() {
                                 text-xs
                                 font-semibold
                                 text-white
+                                dark:bg-white
+                                dark:text-black
                             ">
                                 {order.status || "PROCESSING"}
                             </div>
@@ -231,6 +266,7 @@ export default function OrderSuccess() {
                             border-t
                             border-neutral-200
                             pt-5
+                            dark:border-slate-700
                         ">
 
                             <div className="
@@ -241,6 +277,7 @@ export default function OrderSuccess() {
 
                                 <span className="
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Amount
                                 </span>
@@ -248,6 +285,7 @@ export default function OrderSuccess() {
                                 <span className="
                                     font-semibold
                                     text-black
+                                    dark:text-white
                                 ">
                                     ₹
                                     {Number(
@@ -267,6 +305,7 @@ export default function OrderSuccess() {
 
                                 <span className="
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Payment method
                                 </span>
@@ -274,6 +313,7 @@ export default function OrderSuccess() {
                                 <span className="
                                     font-semibold
                                     text-black
+                                    dark:text-white
                                 ">
                                     {order.paymentMethod}
                                 </span>
@@ -290,6 +330,7 @@ export default function OrderSuccess() {
 
                                 <span className="
                                     text-neutral-500
+                                    dark:text-slate-400
                                 ">
                                     Payment status
                                 </span>
@@ -297,6 +338,7 @@ export default function OrderSuccess() {
                                 <span className="
                                     font-semibold
                                     text-black
+                                    dark:text-white
                                 ">
                                     {order.paymentStatus}
                                 </span>
@@ -320,12 +362,17 @@ export default function OrderSuccess() {
                             border-neutral-200
                             p-5
                             text-left
+                            transition-colors
+                            duration-300
+                            dark:border-slate-700
+                            dark:bg-slate-900
                         ">
 
                             <p className="
                                 text-sm
                                 font-semibold
                                 text-black
+                                dark:text-white
                             ">
                                 Complete your payment
                             </p>
@@ -335,6 +382,7 @@ export default function OrderSuccess() {
                                 text-xs
                                 leading-5
                                 text-neutral-500
+                                dark:text-slate-400
                             ">
                                 Your order has been created.
                                 Continue to Razorpay to
@@ -358,6 +406,9 @@ export default function OrderSuccess() {
                                     text-white
                                     transition
                                     hover:bg-neutral-800
+                                    dark:bg-white
+                                    dark:text-black
+                                    dark:hover:bg-slate-200
                                 "
                             >
                                 Continue to Payment →
@@ -392,6 +443,10 @@ export default function OrderSuccess() {
                             text-black
                             transition
                             hover:bg-neutral-50
+                            dark:border-slate-700
+                            dark:bg-slate-900
+                            dark:text-white
+                            dark:hover:bg-slate-800
                         "
                     >
                         Back to Dashboard

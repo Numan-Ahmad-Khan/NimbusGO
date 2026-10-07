@@ -5,7 +5,7 @@ const app = express();
 const errorHandler = require("./middleware/errorHandler");
 const db = require("./database/Postgres");
 const port = process.env.PORT ||3000;
-
+const ApiKey =require("./models/ApiKey")
 const redis = require("./config/redis");
 
 const payment = require("./routes/payment");
@@ -51,11 +51,17 @@ app.use("/", user);
 const admin = require("./routes/admin");
 app.use("/", admin);
 
+const apiKey = require("./routes/apiKey");
+app.use("/", apiKey);
+
 const otp = require("./routes/otp");
 app.use("/", otp);
 
 const rider = require("./routes/rider");
 app.use("/", rider);
+
+const publicTracking = require("./routes/publicTracking");
+app.use("/", publicTracking);
 
 app.use(errorHandler);
 startServer();

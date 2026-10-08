@@ -82,18 +82,18 @@ Example structure:
     "status": "IN_TRANSIT",
     "currentCheckpoint": {
       "id": 3,
-      "name": "Srinagar Hub",
-      "latitude": 34.0837,
-      "longitude": 74.7973
+      "name": "Hub A",
+      "latitude": xx.xxxxx,
+      "longitude": yy.yyyy
     },
     "transitDetail": [
       {
-        "checkpoint": "Delhi Hub",
+        "checkpoint": "Hub B",
         "status": "COMPLETED",
         "timestamp": "2026-10-05T10:30:00Z"
       },
       {
-        "checkpoint": "Srinagar Hub",
+        "checkpoint": "Hub A",
         "status": "CURRENT",
         "timestamp": "2026-10-06T15:20:00Z"
       }
@@ -123,9 +123,9 @@ Example:
 ```
 {
   "id": 3,
-  "name": "Srinagar Hub",
-  "latitude": 34.0837,
-  "longitude": 74.7973
+  "name": "Hub A",
+  "latitude": xx.xxxx,
+  "longitude": yy.yyyy
 }
 ```
 

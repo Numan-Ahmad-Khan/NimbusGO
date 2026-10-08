@@ -26,7 +26,7 @@ export default function Login() {
                 password
             );
 
-            console.log("Login successful:", data);
+            // console.log("Login successful:", data);
 
             if (data.isVerified) {
                 navigate("/customer/dashboard", {

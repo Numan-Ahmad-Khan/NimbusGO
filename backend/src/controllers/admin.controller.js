@@ -588,57 +588,6 @@ const getCheckpointList = async (req, res) => {
     }
 };
 
-
-// =========================
-// TEST EMAIL
-// =========================
-const testEmail = async (req, res) => {
-    try {
-
-        await sendEmail(
-
-            "sabreenafayaz08@gmail.com",
-
-            "001 Backend Test Email",
-
-            `
-                <h2>Email System Working!</h2>
-
-                <p>
-                    This email was sent using Nodemailer.
-                </p>
-
-                <p>
-                    Your 001 backend email system is configured correctly.
-                </p>
-            `
-        );
-
-
-        res.status(200).json({
-
-            message:
-                "Test email sent successfully"
-
-        });
-
-    }
-    catch (error) {
-
-        res.status(500).json({
-
-            message:
-                "Failed to send test email",
-
-            error:
-                error.message
-
-        });
-
-    }
-};
-
-
 module.exports = {
 
     getMe,
@@ -657,8 +606,6 @@ module.exports = {
 
     addCheckpoint,
 
-    getCheckpointList,
-
-    testEmail
+    getCheckpointList
 
 };

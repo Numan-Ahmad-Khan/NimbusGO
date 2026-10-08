@@ -152,6 +152,6 @@ Features may change, and parts of the application may be modified or expanded as
 
 ## License
 
-NimbusGO is licensed under the [MIT License](https://app.notion.com/LICENSE).
+NimbusGO is licensed under the MIT License.
 
-See the [`LICENSE`](https://app.notion.com/LICENSE) file in the root of the repository for the complete license terms.
+See the LICENSE file in the root of the repository for the complete license terms.
